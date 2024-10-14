@@ -1,0 +1,23 @@
+<!-- @format -->
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Snapchat bot</title>
+</head>
+
+<body>
+    <h1>Snapchat bot</h1>
+    <p id="date"></p>
+    <p>Your streaks will be send at 09:00 UTC time.</p>
+
+    <script>
+        const date = new Date().toString().split(" ");
+        document.querySelector("#date").innerHTML = `${date[0]} ${date[1]} ${date[2]} ${date[3]}`;
+    </script>
+</body>
+
+</html>

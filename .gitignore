@@ -1,0 +1,6 @@
+server/.env
+.env
+node_modules
+tempCodeRunnerFile.js
+.vercel
+server/cookies.json
