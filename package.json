@@ -20,6 +20,9 @@
     "dotenv": "^16.4.5",
     "express": "^4.21.1",
     "prompt-sync": "^4.2.0",
-    "puppeteer": "^19.7.2"
+    "puppeteer": "^19.11.1",
+    "puppeteer-extra": "^3.3.6",
+    "puppeteer-extra-plugin-stealth": "^2.11.2",
+    "random-words": "^2.0.1"
   }
 }

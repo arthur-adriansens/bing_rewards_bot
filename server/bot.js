@@ -1,77 +1,34 @@
 /** @format */
 
 // SETUP
-const puppeteer = require("puppeteer");
+const puppeteer = require("puppeteer-extra");
 const prompt = require("prompt-sync")();
 const fs = require("fs").promises;
 require("dotenv").config();
 
-const streak_receivers = ["ELO A", "Alex Van Daele", "Arthur Hollevoet", "Klaas Goris"];
-const streak_amount = streak_receivers.length;
+const StealthPlugin = require("puppeteer-extra-plugin-stealth");
+puppeteer.use(StealthPlugin());
 
 // LOGIN
 async function login(page) {
-    await page.goto("https://accounts.snapchat.com/accounts/v2/login", { waitUntil: "networkidle0" });
-
     // Set login coockies (if excists)
     try {
         const cookiesString = await fs.readFile("./server/cookies.json");
-
         const cookies = JSON.parse(cookiesString);
+
         await page.setCookie(...cookies);
     } catch (error) {
         console.log("No cookies saved yet. Login required!");
         prompt("Please login manually. Press enter (in this console) when you're logged in.");
 
-        const cookies = await page.cookies("https://accounts.snapchat.com");
+        const cookies = await page.cookies("https://rewards.bing.com");
         await fs.writeFile("./server/cookies.json", JSON.stringify(cookies));
 
         console.clear();
     }
 
-    console.log("Sending snap to:");
-}
-
-// SEND SNAP
-async function send(page, streak_receivers) {
-    await page.goto(`https://web.snapchat.com/u`, { waitUntil: "networkidle0" });
-
-    // Ignore notification popup
-    await page.waitForSelector("svg.cV8g1", { visible: true, timeout: 5000 });
-    await page.click("svg.cV8g1");
-
-    // Click camera
-    await page.waitForSelector("button.qJKfS", { visible: true });
-    await page.click("button.qJKfS");
-
-    // Wait for the video
-    await page.waitForSelector("video.lnAeT:not(.nxGk4)", { visible: true });
-
-    try {
-        await page.waitForSelector("button.hZJL_", { visible: true, timeout: 5000 });
-        await page.click("button.hZJL_");
-    } catch (e) {
-        await page.waitForSelector("button.gK0xL", { visible: true });
-        await page.click("button.gK0xL");
-    }
-
-    await page.waitForSelector("button.fGS78", { visible: true });
-    await page.click("button.fGS78");
-
-    // Select users
-    let i = 1;
-    for (let username of streak_receivers) {
-        await page.waitForSelector(".OgvuO input.dmsdi", { visible: true });
-        await page.type(".OgvuO input.dmsdi", username, { delay: 0 });
-
-        await page.waitForSelector("ul.s7loS", { visible: true });
-        await page.click("ul.s7loS > li:nth-child(2)");
-
-        console.log(`  ${username} (${i}/${streak_amount})`);
-        i += 1;
-    }
-
-    await page.click("button.TYX6O");
+    console.log("Ready to start earning!");
+    return;
 }
 
 // MAIN
@@ -79,33 +36,65 @@ const scrapeLogic = async (res) => {
     const browser = await puppeteer.launch({
         args: ["--disable-setuid-sandbox", "--no-sandbox", "--single-process", "--no-zygote"],
         executablePath: process.env.NODE_ENV === "production" ? process.env.PUPPETEER_EXECUTABLE_PATH : puppeteer.executablePath(),
+        headless: false,
     });
-    //slowMo: 50,
 
     try {
+        console.log("Browser started.");
+
         const page = await browser.newPage();
         await page.setViewport({ width: 1080, height: 1024 });
 
         // Login
         await login(page);
 
-        // Try sending snaps
-        await send(page, streak_receivers);
-        await page.waitForSelector(".tPHQ9.BqyU7", { visible: true });
+        await page.goto("https://rewards.bing.com", { waitUntil: "networkidle0" });
 
-        await new Promise((resolve) => setTimeout(resolve, 2000));
-        const image = await page.screenshot({ path: "./public/uploads/screenshot.png" });
+        // Click daily rewards
+        await page.waitForSelector("#daily-sets mee-card-group:first-of-type .c-card-content");
+        /*const daily_rawards_block = await page.$$("#daily-sets mee-card-group:first-of-type .c-card-content");
 
-        console.log(streak_amount > 1 ? `Snaps sent to ${streak_amount} people.` : "Snap sent to 1 person.");
-        res.send("<p>Snapchat bot executed successfully!</p>");
-        // res.send(image);
+        for (let card of daily_rawards_block) {
+            // await card.click();
+            await page.bringToFront();
+            console.log("clicked");
+        }
+
+        // Click more rewards
+        const more_rawards_block = await page.$$("#more-activities mee-card-group:first-of-type .c-card-content");
+
+        for (let card of more_rawards_block) {
+            if (card.$("a")?.href?.includes("bing.com/search")) {
+                // await card.click();
+                await page.bringToFront();
+                console.log("clicked");
+            }
+        }*/
+
+        // Search rewards
+        await (await page.$("#dailypointColumnCalltoAction")).click();
+        await page.waitForSelector("p[ng-bind-html='$ctrl.pointProgressText']", { visible: true });
+        const pointsbreakdown = await page.$eval("p[ng-bind-html='$ctrl.pointProgressText']", (x) => x.innerHTML);
+        const maxSearches = pointsbreakdown?.includes("/ 30") ? 10 : 30; // 3 points per search
+
+        const search_href = await page.$eval("#userPointsBreakdown a[mee-hyperlink]", (x) => x.getAttribute("href"));
+        await page.goto(search_href, { waitUntil: "networkidle0" });
+
+        const words = await import("random-words").then((randomWords) => randomWords.generate(maxSearches));
+
+        for (let word of words) {
+            //TODO op accept cookies knp drukken, of testen met gwn naar link te gaan: bing.com/serarchq=...
+            await page.waitForSelector("input#sb_form_q", { visible: true, timeout: 10000 });
+            await page.evaluate((searchWord) => (document.querySelector("input#sb_form_q").value = searchWord), word);
+            await new Promise((resolve) => setTimeout(resolve, 3500));
+            await (await page.$("#sb_form_go")).click();
+        }
     } catch (e) {
-        console.error("Error running Snapchat bot:", e);
-        res.send(`Something went wrong while running Puppeteer: ${e}`);
-        // res.status(500).send("<p>Error executing Snapchat bot</p>");
+        console.error("Error while running bot:", e);
     } finally {
         await browser.close();
     }
 };
 
-module.exports = { scrapeLogic };
+scrapeLogic();
+// module.exports = { scrapeLogic };

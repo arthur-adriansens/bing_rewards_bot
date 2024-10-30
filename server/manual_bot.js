@@ -1,19 +1,34 @@
 /** @format */
 
 // SETUP
-const puppeteer = require("puppeteer");
+const puppeteer = require("puppeteer-extra");
 const prompt = require("prompt-sync")();
 const fs = require("fs").promises;
-//const axios = require("axios");
+const path = require("path");
+require("dotenv").config();
 
-const streak_receivers = ["ELO A", "Alex Van Daele", "Arthur Hollevoet", "Klaas Goris"];
-const streak_amount = streak_receivers.length;
+const StealthPlugin = require("puppeteer-extra-plugin-stealth");
+puppeteer.use(StealthPlugin());
+
+// puppeteer usage as normal
+puppeteer.launch({ headless: true }).then(async (browser) => {
+    console.log("Running tests..");
+    const page = await browser.newPage();
+    await page.goto("https://bot.sannysoft.com");
+    await page.waitForTimeout(5000);
+    await page.screenshot({ path: "testresult.png", fullPage: true });
+    await browser.close();
+    console.log(`All done, check the screenshot. ✨`);
+});
 
 // LOGIN
 async function login(page) {
-    await page.goto("https://accounts.snapchat.com/accounts/v2/login", { waitUntil: "networkidle0" });
+    await page.goto(
+        "https://login.live.com/login.srf?wa=wsignin1.0&rpsnv=163&id=264960&wreply=https%3a%2f%2fwww.bing.com%2fsecure%2fPassport.aspx%3fedge_suppress_profile_switch%3d1%26requrl%3dhttps%253a%252f%252fwww.bing.com%252fmsrewards%252fapi%252fv1%252fenroll%253fpubl%253dBINGIP%2526crea%253dML25SJ%2526pn%253dREWARDSHUB%2526partnerId%253dBingRewards%2526pred%253dtrue%2526sessionId%253d%2526ru%253dhttps%2525253A%2525252F%2525252Fwww.bing.com%2525252F%2525253FtoWww%2525253D1%25252526redig%2525253DF502E383F1E64E449CEB6F219E2B53C5%26sig%3d3061CF3B36526C9231FBDBFD373E6D96%26nopa%3d2&wp=MBI_SSL&lc=2057&CSRFToken=707bc56f-2bae-4370-8a16-06de2857630e&cobrandid=03c8bbb5-2dff-4721-8261-a4ccff24c81a&nopa=2&lw=1&fl=easi2",
+        { waitUntil: "networkidle0" }
+    );
 
-    // set login coockies (if excists)
+    // Set login coockies (if excists)
     try {
         const cookiesString = await fs.readFile("./server/cookies.json");
 
@@ -32,74 +47,29 @@ async function login(page) {
     console.log("Sending snap to:");
 }
 
-// SEND SNAP
-async function send(page, streak_receivers) {
-    await page.goto(`https://web.snapchat.com/u`, { waitUntil: "networkidle0" });
-
-    // ignore notification popup
-    await page.waitForSelector("svg.cV8g1", { visible: true, timeout: 5000 });
-    await page.click("svg.cV8g1");
-
-    // click camera
-    await page.waitForSelector("button.qJKfS", { visible: true });
-    await page.click("button.qJKfS");
-
-    // wait for the video
-    await page.waitForSelector("video.lnAeT:not(.nxGk4)", { visible: true });
+// MAIN
+const scrapeLogic = async (res) => {
+    const browser = await puppeteer.launch({
+        args: ["--disable-setuid-sandbox", "--no-sandbox", "--single-process", "--no-zygote"],
+        executablePath: process.env.NODE_ENV === "production" ? process.env.PUPPETEER_EXECUTABLE_PATH : puppeteer.executablePath(),
+        headless: false,
+        slowMo: 50,
+    });
 
     try {
-        await page.waitForSelector("button.hZJL_", { visible: true, timeout: 5000 });
-        await page.click("button.hZJL_");
+        console.log("browser started success");
+
+        const page = await browser.newPage();
+        await page.setViewport({ width: 1080, height: 1024 });
+
+        // Login
+        await login(page);
     } catch (e) {
-        await page.waitForSelector("button.gK0xL", { visible: true });
-        await page.click("button.gK0xL");
+        console.error("Error while running bot:", e);
+    } finally {
+        await browser.close();
     }
+};
 
-    await page.waitForSelector("button.fGS78", { visible: true });
-    await page.click("button.fGS78");
-
-    // select users
-    let i = 1;
-    for (let username of streak_receivers) {
-        await page.waitForSelector(".OgvuO input.dmsdi", { visible: true });
-        await page.type(".OgvuO input.dmsdi", username, { delay: 0 });
-
-        await page.waitForSelector("ul.s7loS", { visible: true });
-        await page.click("ul.s7loS > li:nth-child(2)");
-
-        console.log(`  ${username} (${i}/${streak_amount})`);
-        i += 1;
-    }
-
-    await page.click("button.TYX6O");
-}
-
-// MAIN
-async function main() {
-    // launch the browser and open a new blank page
-    const browser = await puppeteer.launch({
-        headless: false,
-        //slowMo: 50,
-        args: ["--use-fake-ui-for-media-stream"],
-    });
-    const page = await browser.newPage();
-    await page.setViewport({ width: 1080, height: 1024 });
-
-    // login
-    await login(page);
-
-    // try sending snaps
-    await send(page, streak_receivers);
-    await page.waitForSelector(".tPHQ9.BqyU7", { visible: true });
-
-    await new Promise((resolve) => setTimeout(resolve, 2000));
-    const image = await page.screenshot({ path: "./public/uploads/screenshot.png" });
-
-    //const response = await axios.post("https://snapchat-bot-ruddy.vercel.app/upload", image).catch((error) => console.error(error));
-    //console.log(response);
-
-    console.log(streak_amount > 1 ? `Snaps sent to ${streak_amount} people.` : "Snap sent to 1 person.");
-    await browser.close();
-}
-
-main();
+// scrapeLogic();
+// module.exports = { scrapeLogic };
