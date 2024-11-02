@@ -13,7 +13,6 @@ puppeteer.use(StealthPlugin());
 async function login(page) {
     // Set login coockies (if excists)
     try {
-        console.log(process.env.TEST_COOKIES);
         const cookiesString = process.env.TEST_COOKIES || (await fs.readFile("./server/cookies.json"));
         const cookies = JSON.parse(cookiesString);
 
@@ -39,7 +38,7 @@ const scrapeLogic = async (res) => {
     const browser = await puppeteer.launch({
         args: ["--disable-setuid-sandbox", "--no-sandbox", "--single-process", "--no-zygote"],
         executablePath: process.env.NODE_ENV === "production" ? process.env.PUPPETEER_EXECUTABLE_PATH : puppeteer.executablePath(),
-        // headless: false,
+        headless: "true",
     });
 
     try {
@@ -70,7 +69,26 @@ const scrapeLogic = async (res) => {
 
         // Search rewards
         await (await page.$("#dailypointColumnCalltoAction")).click();
+
+        await page.screenshot({
+            path: "test.png",
+        });
+        const axios = require("axios");
+        const FormData = require("form-data");
+        const puppeteer = require("puppeteer");
+        const form = new FormData();
+        form.append("filename", await page.screenshot(), { contentType: "image/png", filename: "screenshot.png" });
+        try {
+            const response = await axios.post("https://api.magicapi.dev/api/v1/magicapi/image-upload/upload", form, {
+                headers: { accept: "application/json", "x-magicapi-key": process.env.TEST_APIKEY, ...form.getHeaders() },
+            });
+            console.log(response.data);
+        } catch (error) {
+            console.error("Error uploading:", error.response?.data || error.message);
+        }
+
         await page.waitForSelector("p[ng-bind-html='$ctrl.pointProgressText']"); //test
+        console.log("passed");
         await page.waitForSelector("p[ng-bind-html='$ctrl.pointProgressText']", { visible: true });
         const pointsbreakdown = await page.$eval("p[ng-bind-html='$ctrl.pointProgressText']", (x) => x.innerHTML);
         const maxSearches = pointsbreakdown?.includes("/ 30") ? 10 : 30; // 3 points per search

@@ -21,3 +21,4 @@ jobs:
               run: npm start
               env:
                   TEST_COOKIES: ${{ secrets.TEST_COOKIES }}
+                  TEST_APIKEY: ${{ secrets.TEST_APIKEY }}
