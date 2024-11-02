@@ -13,7 +13,7 @@ puppeteer.use(StealthPlugin());
 async function login(page) {
     // Set login coockies (if excists)
     try {
-        console.log(process.env.test_cookies);
+        console.log(process.env.TEST_COOKIES);
         const cookiesString = process.env.TEST_COOKIES || (await fs.readFile("./server/cookies.json"));
         const cookies = JSON.parse(cookiesString);
 
@@ -56,21 +56,21 @@ const scrapeLogic = async (res) => {
         // Click daily and more rewards
         await page.waitForSelector("#daily-sets mee-card-group:first-of-type .c-card-content");
         const reward_blocks = await page.$$("#daily-sets mee-card-group:first-of-type .c-card-content, #more-activities .c-card-content");
-        const cards_hrefs = await page.$$eval(
-            "#daily-sets mee-card-group:first-of-type .c-card-content a, #more-activities .c-card-content a",
-            (cards) => cards.map((x) => x.getAttribute("href"))
-        );
+        const cards_hrefs = await page.$$eval("#daily-sets mee-card-group:first-of-type .c-card-content a, #more-activities .c-card-content a", (cards) => cards.map((x) => x.getAttribute("href")));
 
         for (let card_index in reward_blocks) {
             if (!cards_hrefs[card_index] || cards_hrefs[card_index].includes("bing.com/search")) {
                 await reward_blocks[card_index].click();
                 await page.bringToFront();
                 console.log("clicked");
+            } else {
+                console.log("skipped");
             }
         }
 
         // Search rewards
         await (await page.$("#dailypointColumnCalltoAction")).click();
+        await page.waitForSelector("p[ng-bind-html='$ctrl.pointProgressText']"); //test
         await page.waitForSelector("p[ng-bind-html='$ctrl.pointProgressText']", { visible: true });
         const pointsbreakdown = await page.$eval("p[ng-bind-html='$ctrl.pointProgressText']", (x) => x.innerHTML);
         const maxSearches = pointsbreakdown?.includes("/ 30") ? 10 : 30; // 3 points per search
