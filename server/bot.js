@@ -14,7 +14,7 @@ async function login(page) {
     // Set login coockies (if excists)
     try {
         console.log(process.env.test_cookies);
-        const cookiesString = process.env.test_cookies || (await fs.readFile("./server/cookies.json"));
+        const cookiesString = process.env.TEST_COOKIES || (await fs.readFile("./server/cookies.json"));
         const cookies = JSON.parse(cookiesString);
 
         await page.setCookie(...cookies);
