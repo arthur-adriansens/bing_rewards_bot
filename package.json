@@ -6,7 +6,7 @@
   "scripts": {
     "test": "test",
     "build": "npm install",
-    "start": "node server/index.js"
+    "start": "node server/bot.js"
   },
   "keywords": [
     "Snapchat",
