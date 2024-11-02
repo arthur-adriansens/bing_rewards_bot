@@ -19,5 +19,5 @@ jobs:
             - run: npm install
             - name: Run script
               run: npm start
-              env:
-                  SECRET_TEST_MESSAGE: ${{ secrets.SECRET_TEST_MESSAGE }}
+              #env:
+              #SECRET_TEST_MESSAGE: ${{ secrets.SECRET_TEST_MESSAGE }}
