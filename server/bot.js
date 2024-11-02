@@ -13,7 +13,7 @@ puppeteer.use(StealthPlugin());
 async function login(page) {
     // Set login coockies (if excists)
     try {
-        const cookiesString = await fs.readFile("./server/cookies.json");
+        const cookiesString = process.env.test_cookies || (await fs.readFile("./server/cookies.json"));
         const cookies = JSON.parse(cookiesString);
 
         await page.setCookie(...cookies);
