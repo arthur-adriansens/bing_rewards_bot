@@ -19,6 +19,8 @@ async function login(page) {
         await page.setCookie(...cookies);
     } catch (error) {
         console.log("No cookies saved yet. Login required!");
+        page.goto("https://rewards.bing.com", { waitUntil: "networkidle0", timeout: 0 });
+
         prompt("Please login manually. Press enter (in this console) when you're logged in.");
 
         const cookies = await page.cookies("https://rewards.bing.com");
@@ -43,33 +45,28 @@ const scrapeLogic = async (res) => {
         console.log("Browser started.");
 
         const page = await browser.newPage();
-        await page.setViewport({ width: 1080, height: 1024 });
+        await page.setViewport({ width: 1600, height: 1024 });
 
         // Login
         await login(page);
 
         await page.goto("https://rewards.bing.com", { waitUntil: "networkidle0" });
 
-        // Click daily rewards
+        // Click daily and more rewards
         await page.waitForSelector("#daily-sets mee-card-group:first-of-type .c-card-content");
-        /*const daily_rawards_block = await page.$$("#daily-sets mee-card-group:first-of-type .c-card-content");
+        const reward_blocks = await page.$$("#daily-sets mee-card-group:first-of-type .c-card-content, #more-activities .c-card-content");
+        const cards_hrefs = await page.$$eval(
+            "#daily-sets mee-card-group:first-of-type .c-card-content a, #more-activities .c-card-content a",
+            (cards) => cards.map((x) => x.getAttribute("href"))
+        );
 
-        for (let card of daily_rawards_block) {
-            // await card.click();
-            await page.bringToFront();
-            console.log("clicked");
-        }
-
-        // Click more rewards
-        const more_rawards_block = await page.$$("#more-activities mee-card-group:first-of-type .c-card-content");
-
-        for (let card of more_rawards_block) {
-            if (card.$("a")?.href?.includes("bing.com/search")) {
-                // await card.click();
+        for (let card_index in reward_blocks) {
+            if (!cards_hrefs[card_index] || cards_hrefs[card_index].includes("bing.com/search")) {
+                await reward_blocks[card_index].click();
                 await page.bringToFront();
                 console.log("clicked");
             }
-        }*/
+        }
 
         // Search rewards
         await (await page.$("#dailypointColumnCalltoAction")).click();
@@ -82,12 +79,14 @@ const scrapeLogic = async (res) => {
 
         const words = await import("random-words").then((randomWords) => randomWords.generate(maxSearches));
 
-        for (let word of words) {
-            //TODO op accept cookies knp drukken, of testen met gwn naar link te gaan: bing.com/serarchq=...
-            await page.waitForSelector("input#sb_form_q", { visible: true, timeout: 10000 });
-            await page.evaluate((searchWord) => (document.querySelector("input#sb_form_q").value = searchWord), word);
+        // search first word
+        await page.waitForSelector("input#sb_form_q", { visible: true, timeout: 10000 });
+        await page.type("input#sb_form_q", words[0]);
+        await page.keyboard.press("Enter");
+
+        for (let word of words.slice(1)) {
             await new Promise((resolve) => setTimeout(resolve, 3500));
-            await (await page.$("#sb_form_go")).click();
+            await page.goto(page.url().replace(/(q=)[^&]*/, `$1${word}`), { waitUntil: "networkidle0" });
         }
     } catch (e) {
         console.error("Error while running bot:", e);
