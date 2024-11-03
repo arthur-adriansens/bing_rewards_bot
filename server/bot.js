@@ -44,7 +44,7 @@ async function uploadScreenshot(page) {
                 accept: "application/json",
             },
         });
-        console.log(response.data, response.data?.url);
+        console.log(response.data?.url);
     } catch (error) {
         console.error("Error uploading:", error.response?.data || error.message);
     }
@@ -117,6 +117,9 @@ const scrapeLogic = async (res) => {
     } finally {
         await browser.close();
     }
+
+    console.log("closed");
+    return;
 };
 
 scrapeLogic();
