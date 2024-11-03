@@ -36,13 +36,15 @@ async function login(page) {
 }
 
 async function uploadScreenshot() {
-    const form = new FormData();
-    form.append("filename", await page.screenshot(), { contentType: "image/png", filename: "screenshot.png" });
     try {
-        const response = await axios.post("https://api.magicapi.dev/api/v1/magicapi/image-upload/upload", form, {
-            headers: { accept: "application/json", "x-magicapi-key": process.env.TEST_APIKEY, ...form.getHeaders() },
+        const screenshotBuffer = await page.screenshot({ type: "png" });
+        const response = await axios.post("https://your-vercel-app-url/api/upload", screenshotBuffer, {
+            headers: {
+                "Content-Type": "image/png",
+                accept: "application/json",
+            },
         });
-        console.log(response.data);
+        console.log(response.data, response.data?.url);
     } catch (error) {
         console.error("Error uploading:", error.response?.data || error.message);
     }

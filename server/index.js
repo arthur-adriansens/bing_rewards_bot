@@ -1,10 +1,9 @@
 /** @format */
 
+import { put } from "@vercel/blob";
 const express = require("express");
-const multer = require("multer");
 const cors = require("cors");
 const path = require("path");
-const fs = require("fs");
 
 // Initialize express app
 const app = express();
@@ -16,29 +15,23 @@ app.use(cors());
 // Serve static files for the home page
 app.use("/", express.static(path.join(__dirname, "../public")));
 
-// Set up multer for file uploads (images)
-const storage = multer.diskStorage({
-    destination: (req, file, cb) => {
-        const uploadPath = path.join(__dirname, "uploads");
-        if (!fs.existsSync(uploadPath)) {
-            fs.mkdirSync(uploadPath);
-        }
-        cb(null, uploadPath);
-    },
-    filename: (req, file, cb) => {
-        cb(null, Date.now() + "-" + file.originalname);
-    },
-});
-const upload = multer({ storage });
-
 // API endpoint for image upload
-app.post("/api/upload", upload.single("image"), (req, res) => {
-    if (!req.file) {
+app.use(express.raw({ type: "image/*", limit: "10mb" }));
+app.post("/api/upload", async (req, res) => {
+    if (!req.body || req.body.length === 0) {
         return res.status(400).json({ error: "No file uploaded" });
     }
 
-    const fileUrl = `${req.protocol}://${req.get("host")}/uploads/${req.file.filename}`;
-    res.json({ url: fileUrl });
+    try {
+        const { url } = await put("uploaded-image", req.body, {
+            access: "public",
+        });
+
+        res.json({ url });
+    } catch (error) {
+        console.error("Upload error:", error);
+        res.status(500).json({ error: "Failed to upload file" });
+    }
 });
 
 // Serve uploaded images
