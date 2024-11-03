@@ -53,7 +53,7 @@ async function uploadScreenshot(page) {
 // MAIN
 const scrapeLogic = async (res) => {
     const browser = await puppeteer.launch({
-        args: ["--disable-setuid-sandbox", "--no-sandbox", "--single-process", "--no-zygote"],
+        args: ["--disable-setuid-sandbox", "--no-sandbox"],
         executablePath: process.env.NODE_ENV === "production" ? process.env.PUPPETEER_EXECUTABLE_PATH : puppeteer.executablePath(),
         headless: "true",
     });
@@ -123,7 +123,7 @@ const scrapeLogic = async (res) => {
     }
 
     console.log("test4");
-    process.exit(0);
+    // process.exit(0);
 };
 
 scrapeLogic();
