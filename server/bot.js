@@ -38,7 +38,7 @@ async function login(page) {
 async function uploadScreenshot(page) {
     try {
         const screenshotBuffer = await page.screenshot({ type: "png" });
-        const response = await axios.post("https://your-vercel-app-url/api/upload", screenshotBuffer, {
+        const response = await axios.post("https://bing-rewards-bot.vercel.app/api/upload", screenshotBuffer, {
             headers: {
                 "Content-Type": "image/png",
                 accept: "application/json",
@@ -107,11 +107,11 @@ const scrapeLogic = async (res) => {
         await page.type("input#sb_form_q", words[0]);
         await page.keyboard.press("Enter");
 
-        for (let word of words.slice(1)) {
-            await new Promise((resolve) => setTimeout(resolve, 3500));
-            await page.goto(page.url().replace(/(q=)[^&]*/, `$1${word}`), { waitUntil: "networkidle0" });
-            console.log(word);
-        }
+        // for (let word of words.slice(1)) {
+        //     await new Promise((resolve) => setTimeout(resolve, 3500));
+        //     await page.goto(page.url().replace(/(q=)[^&]*/, `$1${word}`), { waitUntil: "networkidle0" });
+        //     console.log(word);
+        // }
     } catch (e) {
         console.error("Error while running bot:", e);
     } finally {
