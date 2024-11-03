@@ -96,6 +96,7 @@ const scrapeLogic = async (res) => {
         const maxSearches = pointsbreakdown?.includes("/ 30") ? 10 : 30; // 3 points per search
         const search_href = await page.$eval("#userPointsBreakdown a[mee-hyperlink]", (x) => x.getAttribute("href"));
         await page.goto(search_href, { waitUntil: "networkidle0" });
+        await login(page);
 
         const words = await import("random-words").then((randomWords) => randomWords.generate(maxSearches));
 
@@ -104,16 +105,13 @@ const scrapeLogic = async (res) => {
         await page.type("input#sb_form_q", words[0]);
         await page.keyboard.press("Enter");
 
+        await new Promise((resolve) => setTimeout(resolve, 2000));
         await uploadScreenshot(page);
 
         for (let word of words.slice(1)) {
             await new Promise((resolve) => setTimeout(resolve, 3500));
             await page.goto(page.url().replace(/(q=)[^&]*/, `$1${word}`), { waitUntil: "networkidle0" });
             console.log(word);
-
-            await new Promise((resolve) => setTimeout(resolve, 3500));
-            await uploadScreenshot(page);
-            break;
         }
     } catch (e) {
         console.error("Error while running bot:", e);
