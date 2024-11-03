@@ -46,14 +46,18 @@ const scrapeLogic = async (res) => {
 
         const page = await browser.newPage();
         await page.setViewport({ width: 1600, height: 1024 });
+        await page.setGeolocation({ latitude: 51, longitude: 3 });
 
         // Login
         await login(page);
 
         await page.goto("https://rewards.bing.com", { waitUntil: "networkidle0" });
+        await page.waitForSelector("#daily-sets mee-card-group:first-of-type .c-card-content");
+
+        // Remove popup (even if invisible)
+        await page.$$eval("mee-rewards-pop-up", (els) => els?.forEach((el) => el.remove())).catch((e) => console.log(e));
 
         // Click daily and more rewards
-        await page.waitForSelector("#daily-sets mee-card-group:first-of-type .c-card-content");
         const reward_blocks = await page.$$("#daily-sets mee-card-group:first-of-type .c-card-content, #more-activities .c-card-content");
         const cards_hrefs = await page.$$eval("#daily-sets mee-card-group:first-of-type .c-card-content a, #more-activities .c-card-content a", (cards) => cards.map((x) => x.getAttribute("href")));
 
@@ -87,8 +91,6 @@ const scrapeLogic = async (res) => {
             console.error("Error uploading:", error.response?.data || error.message);
         }
 
-        await page.waitForSelector("p[ng-bind-html='$ctrl.pointProgressText']"); //test
-        console.log("passed");
         await page.waitForSelector("p[ng-bind-html='$ctrl.pointProgressText']", { visible: true });
         const pointsbreakdown = await page.$eval("p[ng-bind-html='$ctrl.pointProgressText']", (x) => x.innerHTML);
         const maxSearches = pointsbreakdown?.includes("/ 30") ? 10 : 30; // 3 points per search
