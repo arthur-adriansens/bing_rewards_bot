@@ -14,7 +14,7 @@ const port = process.env.PORT || 3000;
 app.use(cors());
 
 // Serve static files for the home page
-app.use(express.static(path.join(__dirname, "public")));
+app.use("/", express.static(path.join(__dirname, "../public")));
 
 // Set up multer for file uploads (images)
 const storage = multer.diskStorage({
@@ -30,11 +30,6 @@ const storage = multer.diskStorage({
     },
 });
 const upload = multer({ storage });
-
-// Home route
-app.get("/", (req, res) => {
-    res.sendFile(path.join(__dirname, "public", "index.html"));
-});
 
 // API endpoint for image upload
 app.post("/api/upload", upload.single("image"), (req, res) => {
