@@ -4,6 +4,8 @@
 const puppeteer = require("puppeteer-extra");
 const prompt = require("prompt-sync")();
 const fs = require("fs").promises;
+const axios = require("axios");
+const FormData = require("form-data");
 require("dotenv").config();
 
 const StealthPlugin = require("puppeteer-extra-plugin-stealth");
@@ -31,6 +33,19 @@ async function login(page) {
 
     console.log("Ready to start earning!");
     return;
+}
+
+async function uploadScreenshot() {
+    const form = new FormData();
+    form.append("filename", await page.screenshot(), { contentType: "image/png", filename: "screenshot.png" });
+    try {
+        const response = await axios.post("https://api.magicapi.dev/api/v1/magicapi/image-upload/upload", form, {
+            headers: { accept: "application/json", "x-magicapi-key": process.env.TEST_APIKEY, ...form.getHeaders() },
+        });
+        console.log(response.data);
+    } catch (error) {
+        console.error("Error uploading:", error.response?.data || error.message);
+    }
 }
 
 // MAIN
@@ -74,22 +89,7 @@ const scrapeLogic = async (res) => {
         // Search rewards
         await (await page.$("#dailypointColumnCalltoAction")).click();
 
-        await page.screenshot({
-            path: "test.png",
-        });
-        const axios = require("axios");
-        const FormData = require("form-data");
-        const puppeteer = require("puppeteer");
-        const form = new FormData();
-        form.append("filename", await page.screenshot(), { contentType: "image/png", filename: "screenshot.png" });
-        try {
-            const response = await axios.post("https://api.magicapi.dev/api/v1/magicapi/image-upload/upload", form, {
-                headers: { accept: "application/json", "x-magicapi-key": process.env.TEST_APIKEY, ...form.getHeaders() },
-            });
-            console.log(response.data);
-        } catch (error) {
-            console.error("Error uploading:", error.response?.data || error.message);
-        }
+        await uploadScreenshot();
 
         await page.waitForSelector("p[ng-bind-html='$ctrl.pointProgressText']", { visible: true });
         const pointsbreakdown = await page.$eval("p[ng-bind-html='$ctrl.pointProgressText']", (x) => x.innerHTML);
@@ -108,6 +108,7 @@ const scrapeLogic = async (res) => {
         for (let word of words.slice(1)) {
             await new Promise((resolve) => setTimeout(resolve, 3500));
             await page.goto(page.url().replace(/(q=)[^&]*/, `$1${word}`), { waitUntil: "networkidle0" });
+            console.log(word);
         }
     } catch (e) {
         console.error("Error while running bot:", e);
@@ -117,4 +118,4 @@ const scrapeLogic = async (res) => {
 };
 
 scrapeLogic();
-// module.exports = { scrapeLogic };
+module.exports = { scrapeLogic };

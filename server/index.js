@@ -1,38 +1,55 @@
 /** @format */
 
 const express = require("express");
-const { scrapeLogic } = require("./bot");
+const multer = require("multer");
+const cors = require("cors");
 const path = require("path");
+const fs = require("fs");
 
+// Initialize express app
 const app = express();
-const PORT = process.env.PORT || 4000;
+const port = process.env.PORT || 3000;
 
-// const multer = require("multer");
-// const storage = multer.diskStorage({
-//     destination: (req, file, cb) => cb(null, __dirname + "/public/uploads/"),
-// });
-// const upload = multer({ storage: storage });
+// Set up CORS to allow requests from other domains
+app.use(cors());
 
-// app.use(cors());
-app.use("/", express.static(path.join(__dirname, "../public")));
+// Serve static files for the home page
+app.use(express.static(path.join(__dirname, "public")));
 
-// app.get("/", (req, res) => {
-//     res.send("<p>homepage</p>");
-// });
+// Set up multer for file uploads (images)
+const storage = multer.diskStorage({
+    destination: (req, file, cb) => {
+        const uploadPath = path.join(__dirname, "uploads");
+        if (!fs.existsSync(uploadPath)) {
+            fs.mkdirSync(uploadPath);
+        }
+        cb(null, uploadPath);
+    },
+    filename: (req, file, cb) => {
+        cb(null, Date.now() + "-" + file.originalname);
+    },
+});
+const upload = multer({ storage });
 
-app.get("/scrape", async (req, res) => {
-    await scrapeLogic(res);
+// Home route
+app.get("/", (req, res) => {
+    res.sendFile(path.join(__dirname, "public", "index.html"));
 });
 
-// app.post("/upload", upload.single("file"), (req, res) => {
-//     if (!req.body) {
-//         return res.status(400).send("No image data received");
-//     }
+// API endpoint for image upload
+app.post("/api/upload", upload.single("image"), (req, res) => {
+    if (!req.file) {
+        return res.status(400).json({ error: "No file uploaded" });
+    }
 
-//     console.log(req.file);
+    const fileUrl = `${req.protocol}://${req.get("host")}/uploads/${req.file.filename}`;
+    res.json({ url: fileUrl });
+});
 
-//     //const imagePath = path.join(__dirname, "public", "screenshot.png");
-//     res.status(200).send("Image uploaded and saved successfully").json(req.file);
-// });
+// Serve uploaded images
+app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
-app.listen(PORT, () => console.log(`Server ready on port ${PORT}.`));
+// Start the server
+app.listen(port, () => {
+    console.log(`Server running on port ${port}`);
+});
