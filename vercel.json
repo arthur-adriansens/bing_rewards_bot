@@ -2,25 +2,14 @@
     "version": 2,
     "builds": [
         {
-            "src": "server/server.js",
+            "src": "server/index.js",
             "use": "@vercel/node"
         }
     ],
     "routes": [
         {
             "src": "/(.*)",
-            "headers": {
-                "Access-Control-Allow-Origin": "*",
-                "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, OPTIONS",
-                "Access-Control-Allow-Headers": "Content-Type, Authorization"
-            },
-            "dest": "/server/server.js"
-        }
-    ],
-    "crons": [
-        {
-            "path": "/server/bot.js",
-            "schedule": "0 7 * * *"
+            "dest": "server/index.js"
         }
     ]
 }
