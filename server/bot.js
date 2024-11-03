@@ -35,7 +35,7 @@ async function login(page) {
     return;
 }
 
-async function uploadScreenshot() {
+async function uploadScreenshot(page) {
     try {
         const screenshotBuffer = await page.screenshot({ type: "png" });
         const response = await axios.post("https://your-vercel-app-url/api/upload", screenshotBuffer, {
@@ -91,7 +91,7 @@ const scrapeLogic = async (res) => {
         // Search rewards
         await (await page.$("#dailypointColumnCalltoAction")).click();
 
-        await uploadScreenshot();
+        await uploadScreenshot(page);
 
         await page.waitForSelector("p[ng-bind-html='$ctrl.pointProgressText']", { visible: true });
         const pointsbreakdown = await page.$eval("p[ng-bind-html='$ctrl.pointProgressText']", (x) => x.innerHTML);
