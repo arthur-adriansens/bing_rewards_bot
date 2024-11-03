@@ -5,7 +5,6 @@ const puppeteer = require("puppeteer-extra");
 const prompt = require("prompt-sync")();
 const fs = require("fs").promises;
 const axios = require("axios");
-const FormData = require("form-data");
 require("dotenv").config();
 
 const StealthPlugin = require("puppeteer-extra-plugin-stealth");
@@ -76,7 +75,10 @@ const scrapeLogic = async (res) => {
 
         // Click daily and more rewards
         const reward_blocks = await page.$$("#daily-sets mee-card-group:first-of-type .c-card-content, #more-activities .c-card-content");
-        const cards_hrefs = await page.$$eval("#daily-sets mee-card-group:first-of-type .c-card-content a, #more-activities .c-card-content a", (cards) => cards.map((x) => x.getAttribute("href")));
+        const cards_hrefs = await page.$$eval(
+            "#daily-sets mee-card-group:first-of-type .c-card-content a, #more-activities .c-card-content a",
+            (cards) => cards.map((x) => x.getAttribute("href"))
+        );
 
         for (let card_index in reward_blocks) {
             if (!cards_hrefs[card_index] || cards_hrefs[card_index].includes("bing.com/search")) {
@@ -96,7 +98,6 @@ const scrapeLogic = async (res) => {
         const maxSearches = pointsbreakdown?.includes("/ 30") ? 10 : 30; // 3 points per search
         const search_href = await page.$eval("#userPointsBreakdown a[mee-hyperlink]", (x) => x.getAttribute("href"));
         await page.goto(search_href, { waitUntil: "networkidle0" });
-        await login(page);
 
         const words = await import("random-words").then((randomWords) => randomWords.generate(maxSearches));
 

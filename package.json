@@ -1,15 +1,14 @@
 {
-  "name": "snapchat-bot",
+  "name": "bing-rewards-bot",
   "version": "2.0.0",
-  "description": "A snapchat bot that sends streaks automaticly.",
-  "main": "server/index.js",
+  "description": "A Microsoft bing bot that collects daily points.",
+  "main": "server/bot.js",
   "scripts": {
-    "test": "test",
     "build": "npm install",
     "start": "node server/bot.js"
   },
   "keywords": [
-    "Snapchat",
+    "Microsoft",
     "bot",
     "javascript",
     "node"
@@ -22,7 +21,6 @@
     "cors": "^2.8.5",
     "dotenv": "^16.4.5",
     "express": "^4.21.1",
-    "form-data": "^4.0.1",
     "multer": "^1.4.5-lts.1",
     "prompt-sync": "^4.2.0",
     "puppeteer": "^19.11.1",
