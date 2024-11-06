@@ -1,0 +1,33 @@
+<!-- @format -->
+
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <title>Bing Chilling - admin</title>
+        <link rel="icon" href="https://cdn.glitch.global/a2328394-6a2f-46f0-9a34-e8b074480846/favicon.ico?v=1699797335084" type="image/x-icon" />
+        <style></style>
+    </head>
+
+    <body>
+        <h2>Access <span style="color: red">denied</span>! You don't have admin powers :(.</h2>
+
+        <img id="meme" />
+
+        <script>
+            const images = [
+                "https://media.tenor.com/7J77iJcHMA8AAAAd/penguins-madagascar.gif",
+                "https://media.tenor.com/QPNYQfzQrEEAAAAC/lotr-lord.gif",
+                "https://media.tenor.com/nmZuZ_yKeaUAAAAd/throw-out-rage.gif",
+            ];
+            const alts = [`penguins Madagascar meme`, `You shall not pass! meme`, `Ron Swanson rage meme`];
+            let number = Math.floor(Math.random() * images.length);
+            document.querySelector("#meme").src = images[number];
+            document.querySelector("#meme").alt = alts[number];
+        </script>
+
+        <style>
+            body{ display: flex; align-items: center; flex-direction: column; height:
+            100%; justify-content: center; margin: 0;}
+        </style>
+    </body>
+</html>

@@ -6,7 +6,7 @@
     <head>
         <meta charset="utf-8" />
         <link rel="icon" href="./public/logo.svg" type="image/svg" />
-        <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
 
         <link rel="stylesheet" href="./public/style.css" />
         <link rel="stylesheet" href="./public/tailwind.css" />
@@ -29,7 +29,7 @@
                     <div class="bg-card text-card-foreground rounded-lg border shadow-sm mx-auto max-w-sm">
                         <div class="flex flex-col space-y-1.5 p-6 pb-0">
                             <h3 class="font-semibold tracking-tight text-2xl">Login</h3>
-                            <!-- <p class="text-muted-foreground text-sm">Enter your email below to login to your account</p> -->
+                            <p class="text-muted-foreground text-sm hidden" id="error-msg">Please fill in all fields.</p>
                         </div>
                         <div class="p-6">
                             <div class="grid gap-4">
@@ -54,6 +54,7 @@
                                     </div>
                                 </div>
                                 <button
+                                    id="login"
                                     type="submit"
                                     tabindex="0"
                                     class="ring-offset-background focus-visible:ring-ring inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-primary text-primary-foreground hover:bg-primary/90 h-10 px-4 py-2 w-full"
@@ -66,5 +67,30 @@
                 </div>
             </div>
         </div>
+
+        <script>
+            document.querySelector("#login").onclick = async () => {
+                const name = document.querySelector("#name").value;
+                const password = document.querySelector("#password").value;
+
+                if (name == "" || password == "") {
+                    document.querySelector("#error-msg").classList.remove("hidden");
+                    return;
+                }
+
+                fetch("/login", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify({
+                        name: name,
+                        password: password,
+                    }),
+                })
+                    .then((response) => response.text())
+                    .then((data) => console.log(data));
+            };
+        </script>
     </body>
 </html>

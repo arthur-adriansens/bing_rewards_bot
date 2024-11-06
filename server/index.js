@@ -1,42 +1,44 @@
 /** @format */
 
-import { put } from "@vercel/blob";
+import { sql } from "@vercel/postgres";
 const express = require("express");
 const cors = require("cors");
 const path = require("path");
 
-// Initialize express app
+// Setup express app
 const app = express();
 const port = process.env.PORT || 3000;
 app.use(cors());
-
-// Serve static files for the home page
+app.use(express.json());
 app.use("/public", express.static(path.join(__dirname, "../public")));
 
+// Ports
 app.get("/", (req, res) => {
-    res.sendFile(path.join(__dirname, "login.html"));
+    res.sendFile(path.join(__dirname, "../public", "login.html"));
 });
 
-// API endpoint for image upload
-app.use(express.raw({ type: "image/*", limit: "10mb" }));
-app.post("/api/upload", async (req, res) => {
-    if (!req.body || req.body.length === 0) {
-        return res.status(400).json({ error: "No file uploaded" });
+app.get("/admin", async (req, res) => {
+    const key = req.cookies.key;
+    // reply.setCookie('key', process.env.ADMIN_KEY, { path: '/' });
+
+    if (!key || key != process.env.ADMIN_KEY) {
+        return res.status(403).redirect("/public/admin_error.html");
     }
 
-    try {
-        const { url } = await put("uploaded-image", req.body, {
-            access: "public",
-        });
-
-        res.json({ url });
-    } catch (error) {
-        console.error("Upload error:", error);
-        res.status(500).json({ error: "Failed to upload file" });
-    }
+    const { rows } = await sql`SELECT * FROM users;`;
+    return res.status(200).sendFile(path.join(__dirname, "admin.html"));
 });
 
-app.use("/uploads", express.static(path.join(__dirname, "uploads")));
+app.post("/login", async (req, res) => {
+    // CREATE TABLE users (id SERIAL PRIMARY KEY, username VARCHAR(50) NOT NULL, last_login TIMESTAMP, auth_token TEXT);
+    if (!req.body || !req.body.name || !req.body.password) return res.status(400).send("Please fill in all fields");
+    if (req.body.password != process.env.DASHBOARD_LOGIN_PASS) return res.status(400).send("Wrong password.");
+
+    const { test } = await sql`SELECT * FROM users WHERE username = ${req.body.name};`;
+    const { test2 } = await sql`SELECT auth_token FROM users WHERE username = ${req.body.name};`;
+
+    res.status(200).send(`success: ${test}, also: ${test2}`);
+});
 
 app.listen(port, () => {
     console.log(`Server running on port ${port}`);
