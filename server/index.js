@@ -14,7 +14,7 @@ app.use(cors());
 app.use("/public", express.static(path.join(__dirname, "public")));
 
 app.get("/", (req, res) => {
-    res.sendFile(path.join(__dirname, "server", "login.html"));
+    res.sendFile(path.join(__dirname, "login.html"));
 });
 
 // API endpoint for image upload
