@@ -1,6 +1,6 @@
 /** @format */
 
-import { sql } from "@vercel/postgres";
+const { sql } = require("@vercel/postgres");
 const express = require("express");
 const cors = require("cors");
 const path = require("path");
