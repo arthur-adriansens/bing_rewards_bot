@@ -8,12 +8,14 @@ const path = require("path");
 // Initialize express app
 const app = express();
 const port = process.env.PORT || 3000;
-
-// Set up CORS to allow requests from other domains
 app.use(cors());
 
 // Serve static files for the home page
-app.use("/", express.static(path.join(__dirname, "../public")));
+app.use("/public", express.static(path.join(__dirname, "public")));
+
+app.get("/", (req, res) => {
+    res.sendFile(path.join(__dirname, "server", "login.html"));
+});
 
 // API endpoint for image upload
 app.use(express.raw({ type: "image/*", limit: "10mb" }));
@@ -34,10 +36,8 @@ app.post("/api/upload", async (req, res) => {
     }
 });
 
-// Serve uploaded images
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
-// Start the server
 app.listen(port, () => {
     console.log(`Server running on port ${port}`);
 });

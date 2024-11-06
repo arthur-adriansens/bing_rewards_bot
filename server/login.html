@@ -1,0 +1,70 @@
+<!-- @format -->
+
+<!DOCTYPE html>
+
+<html lang="en">
+    <head>
+        <meta charset="utf-8" />
+        <link rel="icon" href="./public/logo.svg" type="image/svg" />
+        <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+
+        <link rel="stylesheet" href="./public/style.css" />
+        <link rel="stylesheet" href="./public/tailwind.css" />
+        <title>bot login</title>
+        <script>
+            const userPreference = localStorage.getItem("theme");
+            document.documentElement.classList.toggle("dark", userPreference ? userPreference == "dark" : window.matchMedia("(prefers-color-scheme: dark)").matches);
+
+            window.matchMedia("(prefers-color-scheme: dark)").addEventListener("change", (e) => {
+                document.documentElement.classList.toggle("dark", e.matches);
+                localStorage.removeItem("theme");
+            });
+        </script>
+    </head>
+
+    <body data-sveltekit-preload-data="hover" class="bg-background min-h-screen font-sans antialiased">
+        <div style="display: contents" class="relative flex min-h-screen flex-col">
+            <div class="bg-background relative flex min-h-screen flex-col pattern-2" id="page">
+                <div class="w-full h-screen flex items-center justify-center px-4 theme-zinc">
+                    <div class="bg-card text-card-foreground rounded-lg border shadow-sm mx-auto max-w-sm">
+                        <div class="flex flex-col space-y-1.5 p-6 pb-0">
+                            <h3 class="font-semibold tracking-tight text-2xl">Login</h3>
+                            <!-- <p class="text-muted-foreground text-sm">Enter your email below to login to your account</p> -->
+                        </div>
+                        <div class="p-6">
+                            <div class="grid gap-4">
+                                <div class="grid gap-2">
+                                    <label class="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70" for="name">Voornaam</label>
+                                    <input
+                                        class="border-input bg-background ring-offset-background placeholder:text-muted-foreground focus-visible:ring-ring flex h-10 w-full rounded-md border px-3 py-2 text-sm file:border-0 file:bg-transparent file:text-sm file:font-medium focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                                        id="name"
+                                        placeholder="Jeff"
+                                        required=""
+                                    />
+                                </div>
+                                <div class="grid gap-2">
+                                    <label class="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70" for="password">Wachtwoord</label>
+                                    <div>
+                                        <input
+                                            class="border-input bg-background ring-offset-background placeholder:text-muted-foreground focus-visible:ring-ring flex h-10 w-full rounded-md border px-3 py-2 text-sm file:border-0 file:bg-transparent file:text-sm file:font-medium focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                                            id="password"
+                                            type="password"
+                                            required=""
+                                        />
+                                    </div>
+                                </div>
+                                <button
+                                    type="submit"
+                                    tabindex="0"
+                                    class="ring-offset-background focus-visible:ring-ring inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-primary text-primary-foreground hover:bg-primary/90 h-10 px-4 py-2 w-full"
+                                >
+                                    Login
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </body>
+</html>

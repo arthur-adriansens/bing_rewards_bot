@@ -18,7 +18,7 @@ jobs:
                   node-version: "20.x"
             - run: npm install
             - name: Run script
-              run: npm start
+              run: npm bot
               env:
                   TEST_COOKIES: ${{ secrets.TEST_COOKIES }}
                   TEST_APIKEY: ${{ secrets.TEST_APIKEY }}

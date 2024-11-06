@@ -1,17 +1,19 @@
 {
   "name": "bing-rewards-bot",
-  "version": "2.0.0",
-  "description": "A Microsoft bing bot that collects daily points.",
-  "main": "server/bot.js",
+  "version": "3.0.0",
+  "description": "A Microsoft bing bot that collects daily points, including a dashboard and login with a beautifull UI.",
+  "main": "bot/bot.js",
   "scripts": {
+    "test": "node bot/test.js",
     "build": "npm install",
-    "start": "node server/bot.js"
+    "bot": "node bot/bot.js",
+    "start": "node server/index.js"
   },
   "keywords": [
-    "Microsoft",
     "bot",
     "javascript",
-    "node"
+    "node",
+    "express"
   ],
   "author": "Arthur",
   "license": "ISC",
