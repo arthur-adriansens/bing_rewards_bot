@@ -44,7 +44,7 @@ app.post("/admin/new_user", async (req, res) => {
     }
 
     if (!req.body || !req.body.username || !req.body.email || req.body.personal == undefined) return res.status(400).send("Please fill in all fields");
-    const result = await sql`INSERT INTO users (username, email) VALUES ('${req.body.username}', '${req.body.email}');`;
+    const result = await sql`INSERT INTO users (username, email) VALUES (${req.body.username}, ${req.body.email});`;
     return res.status(200).send(result);
 });
 
