@@ -4,13 +4,23 @@
     <head>
         <meta charset="UTF-8" />
         <title>Bing Chilling - admin</title>
-        <style></style>
+        <link rel="stylesheet" href="./public/tailwind.css" />
+        <link rel="stylesheet" href="./public/style.css" />
+        <script>
+            const userPreference = localStorage.getItem("theme");
+            document.documentElement.classList.toggle("dark", userPreference ? userPreference == "dark" : window.matchMedia("(prefers-color-scheme: dark)").matches);
+
+            window.matchMedia("(prefers-color-scheme: dark)").addEventListener("change", (e) => {
+                document.documentElement.classList.toggle("dark", e.matches);
+                localStorage.removeItem("theme");
+            });
+        </script>
     </head>
 
-    <body>
-        <h2>Access <span style="color: red">denied</span>! You don't have admin powers :(.</h2>
+    <body class="bg-background">
+        <h1 class="text-xl font-semibold my-2">Access <span style="color: red">denied</span>! You don't have admin powers :(</h1>
 
-        <img id="meme" />
+        <img id="meme" class="rounded-md border px-3 py-2" />
 
         <script>
             const images = [
@@ -30,3 +40,4 @@
         </style>
     </body>
 </html>
+    
