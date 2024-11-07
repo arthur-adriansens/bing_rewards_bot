@@ -240,7 +240,7 @@
             };
 
             // get users + render
-            // fetch("/admin_cmds/users", {
+            // fetch("/admin/users", {
             //     method: "GET",
             // })
             //     .then((response) => response.text())
@@ -259,7 +259,7 @@
                 if (!elements[0].value || !elements[1].value) return;
                 toggle();
 
-                fetch("/admin_cmds/new_user", {
+                fetch("/admin/new_user", {
                     method: "POST",
                     headers: {
                         "Content-Type": "application/json",

@@ -27,7 +27,7 @@ app.get("/admin", async (req, res) => {
     return res.status(200).sendFile(path.join(__dirname, "admin.html"));
 });
 
-app.get("/admin_cmds/users", async (req, res) => {
+app.get("/admin/users", async (req, res) => {
     const key = req.headers.cookie;
     if (!key || !key.includes(`key=${process.env.ADMIN_KEY}`)) {
         return res.status(403).send("access denied");
@@ -37,7 +37,7 @@ app.get("/admin_cmds/users", async (req, res) => {
     return res.status(200).send(rows);
 });
 
-app.post("/admin_cmds/new_user", async (req, res) => {
+app.post("/admin/new_user", async (req, res) => {
     const key = req.headers.cookie;
     console.log(key);
     if (!key || !key.includes(`key=${process.env.ADMIN_KEY}`)) {
