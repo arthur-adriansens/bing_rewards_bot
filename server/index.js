@@ -39,6 +39,7 @@ app.get("/admin_cmds/users", async (req, res) => {
 
 app.post("/admin_cmds/new_user", async (req, res) => {
     const key = req.headers.cookie;
+    console.log(key);
     if (!key || !key.includes(`key=${process.env.ADMIN_KEY}`)) {
         return res.status(403).send("access denied");
     }
