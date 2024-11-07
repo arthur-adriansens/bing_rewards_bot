@@ -103,7 +103,7 @@
                                 </button>
                             </nav>
                         </aside>
-                        <div class="flex flex-col h-full">
+                        <div class="flex flex-col h-full" style="max-width: calc(100vw - 53px);">
                             <header class="bg-background sticky top-0 z-10 flex h-[57px] items-center gap-1 border-b px-4">
                                 <h1 class="text-xl font-semibold">Bing chilling dashboard</h1>
                                 <button
@@ -123,66 +123,102 @@
                                     <legend class="-ml-1 px-1 text-sm font-medium">Accounts list</legend>
                                     <div class="preview flex min-h-[350px] w-full justify-center p-10 items-center">
                                         <div class="relative w-full overflow-auto">
-                                            <table class="w-full caption-bottom text-sm">
-                                                <caption class="mt-4 text-sm text-muted-foreground">
-                                                    A list of all users.
-                                                </caption>
+                                            <table class="w-full caption-bottom text-sm users">
                                                 <thead class="[&amp;_tr]:border-b">
                                                     <tr class="border-b transition-colors hover:bg-muted/50 data-[state=selected]:bg-muted">
-                                                        <th class="h-12 px-4 text-left align-middle font-medium text-muted-foreground [&amp;:has([role=checkbox])]:pr-0 w-[100px]">Invoice</th>
-                                                        <th class="h-12 px-4 text-left align-middle font-medium text-muted-foreground [&amp;:has([role=checkbox])]:pr-0">Status</th>
-                                                        <th class="h-12 px-4 text-left align-middle font-medium text-muted-foreground [&amp;:has([role=checkbox])]:pr-0">Method</th>
-                                                        <th class="h-12 px-4 align-middle font-medium text-muted-foreground [&amp;:has([role=checkbox])]:pr-0 text-right">Amount</th>
+                                                        <th class="h-12 px-4 text-left align-middle font-medium text-muted-foreground [&amp;:has([role=checkbox])]:pr-0 w-[100px]">Id</th>
+                                                        <th class="h-12 px-4 text-left align-middle font-medium text-muted-foreground [&amp;:has([role=checkbox])]:pr-0">Username</th>
+                                                        <th class="h-12 px-4 text-left align-middle font-medium text-muted-foreground [&amp;:has([role=checkbox])]:pr-0">Email</th>
+                                                        <th class="h-12 px-4 text-left align-middle font-medium text-muted-foreground [&amp;:has([role=checkbox])]:pr-0">Personal</th>
+                                                        <th class="h-12 px-4 text-left align-middle font-medium text-muted-foreground [&amp;:has([role=checkbox])]:pr-0">Last login</th>
+                                                        <th class="h-12 px-4 text-left align-middle font-medium text-muted-foreground [&amp;:has([role=checkbox])]:pr-0">Auth token</th>
                                                     </tr>
                                                 </thead>
                                                 <tbody class="[&amp;_tr:last-child]:border-0">
                                                     <tr class="border-b transition-colors hover:bg-muted/50 data-[state=selected]:bg-muted">
-                                                        <td class="p-4 align-middle [&amp;:has([role=checkbox])]:pr-0 font-medium">INV001</td>
-                                                        <td class="p-4 align-middle [&amp;:has([role=checkbox])]:pr-0">Paid</td>
-                                                        <td class="p-4 align-middle [&amp;:has([role=checkbox])]:pr-0">Credit Card</td>
-                                                        <td class="p-4 align-middle [&amp;:has([role=checkbox])]:pr-0 text-right">$250.00</td>
+                                                        <td class="p-4 align-middle [&amp;:has([role=checkbox])]:pr-0 font-medium">1</td>
+                                                        <td class="p-4 align-middle [&amp;:has([role=checkbox])]:pr-0">Arthur</td>
+                                                        <td class="p-4 align-middle [&amp;:has([role=checkbox])]:pr-0">arthur.adriansens@gmail.com</td>
+                                                        <td class="p-4 align-middle [&amp;:has([role=checkbox])]:pr-0">true</td>
+                                                        <td class="p-4 align-middle [&amp;:has([role=checkbox])]:pr-0">Tue Nov 05 2024</td>
+                                                        <!--new Date().toDateString()-->
+                                                        <td class="p-4 align-middle [&amp;:has([role=checkbox])]:pr-0">
+                                                            <button
+                                                                tabindex="0"
+                                                                onclick="navigator.clipboard.writeText(this?.dataset?.token);"
+                                                                data-token="test"
+                                                                class="ring-offset-background focus-visible:ring-ring inline-flex items-center justify-center whitespace-nowrap font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border-input bg-background hover:bg-accent hover:text-accent-foreground border h-9 rounded-md px-3 ml-auto gap-1.5 text-sm"
+                                                            >
+                                                                <svg viewBox="0 0 24 24" class="size-3.5">
+                                                                    <rect width="8" height="4" x="8" y="2" rx="1" ry="1" />
+                                                                    <path d="M8 4H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2" />
+                                                                    <path d="M16 4h2a2 2 0 0 1 2 2v4" />
+                                                                    <path d="M21 14H11" />
+                                                                    <path d="m15 10-4 4 4 4" />
+                                                                </svg>
+                                                                Copy
+                                                            </button>
+                                                        </td>
                                                     </tr>
-                                                    <tr class="border-b transition-colors hover:bg-muted/50 data-[state=selected]:bg-muted">
-                                                        <td class="p-4 align-middle [&amp;:has([role=checkbox])]:pr-0 font-medium">INV002</td>
-                                                        <td class="p-4 align-middle [&amp;:has([role=checkbox])]:pr-0">Pending</td>
-                                                        <td class="p-4 align-middle [&amp;:has([role=checkbox])]:pr-0">PayPal</td>
-                                                        <td class="p-4 align-middle [&amp;:has([role=checkbox])]:pr-0 text-right">$150.00</td>
-                                                    </tr>
-                                                    <tr class="border-b transition-colors hover:bg-muted/50 data-[state=selected]:bg-muted">
-                                                        <td class="p-4 align-middle [&amp;:has([role=checkbox])]:pr-0 font-medium">INV003</td>
-                                                        <td class="p-4 align-middle [&amp;:has([role=checkbox])]:pr-0">Unpaid</td>
-                                                        <td class="p-4 align-middle [&amp;:has([role=checkbox])]:pr-0">Bank Transfer</td>
-                                                        <td class="p-4 align-middle [&amp;:has([role=checkbox])]:pr-0 text-right">$350.00</td>
-                                                    </tr>
-                                                    <tr class="border-b transition-colors hover:bg-muted/50 data-[state=selected]:bg-muted">
-                                                        <td class="p-4 align-middle [&amp;:has([role=checkbox])]:pr-0 font-medium">INV004</td>
-                                                        <td class="p-4 align-middle [&amp;:has([role=checkbox])]:pr-0">Paid</td>
-                                                        <td class="p-4 align-middle [&amp;:has([role=checkbox])]:pr-0">Credit Card</td>
-                                                        <td class="p-4 align-middle [&amp;:has([role=checkbox])]:pr-0 text-right">$450.00</td>
-                                                    </tr>
-                                                    <tr class="border-b transition-colors hover:bg-muted/50 data-[state=selected]:bg-muted">
-                                                        <td class="p-4 align-middle [&amp;:has([role=checkbox])]:pr-0 font-medium">INV005</td>
-                                                        <td class="p-4 align-middle [&amp;:has([role=checkbox])]:pr-0">Paid</td>
-                                                        <td class="p-4 align-middle [&amp;:has([role=checkbox])]:pr-0">PayPal</td>
-                                                        <td class="p-4 align-middle [&amp;:has([role=checkbox])]:pr-0 text-right">$550.00</td>
-                                                    </tr>
-                                                    <tr class="border-b transition-colors hover:bg-muted/50 data-[state=selected]:bg-muted">
-                                                        <td class="p-4 align-middle [&amp;:has([role=checkbox])]:pr-0 font-medium">INV006</td>
-                                                        <td class="p-4 align-middle [&amp;:has([role=checkbox])]:pr-0">Pending</td>
-                                                        <td class="p-4 align-middle [&amp;:has([role=checkbox])]:pr-0">Bank Transfer</td>
-                                                        <td class="p-4 align-middle [&amp;:has([role=checkbox])]:pr-0 text-right">$200.00</td>
-                                                    </tr>
-                                                    <tr class="border-b transition-colors hover:bg-muted/50 data-[state=selected]:bg-muted">
-                                                        <td class="p-4 align-middle [&amp;:has([role=checkbox])]:pr-0 font-medium">INV007</td>
-                                                        <td class="p-4 align-middle [&amp;:has([role=checkbox])]:pr-0">Unpaid</td>
-                                                        <td class="p-4 align-middle [&amp;:has([role=checkbox])]:pr-0">Credit Card</td>
-                                                        <td class="p-4 align-middle [&amp;:has([role=checkbox])]:pr-0 text-right">$300.00</td>
+                                                    <tr id="new_user" class="hidden border-b transition-colors data-[state=selected]:bg-muted bg-muted/50">
+                                                        <td class="p-4 align-middle [&amp;:has([role=checkbox])]:pr-0 font-medium">.</td>
+                                                        <td class="p-4 align-middle [&amp;:has([role=checkbox])]:pr-0">
+                                                            <input
+                                                                class="border-input bg-background ring-offset-background placeholder:text-muted-foreground focus-visible:ring-ring flex h-10 w-full rounded-md border px-3 py-2 text-sm file:border-0 file:bg-transparent file:text-sm file:font-medium focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                                                                id="new_name"
+                                                                type="text"
+                                                                placeholder="Jeff"
+                                                            />
+                                                        </td>
+                                                        <td class="p-4 align-middle [&amp;:has([role=checkbox])]:pr-0">
+                                                            <input
+                                                                class="border-input bg-background ring-offset-background placeholder:text-muted-foreground focus-visible:ring-ring flex h-10 w-full rounded-md border px-3 py-2 text-sm file:border-0 file:bg-transparent file:text-sm file:font-medium focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                                                                id="new_email"
+                                                                type="email"
+                                                                placeholder="example@gmail.com"
+                                                            />
+                                                        </td>
+                                                        <td class="p-4 align-middle [&amp;:has([role=checkbox])]:pr-0">
+                                                            <input
+                                                                type="checkbox"
+                                                                class="peer h-4 w-4 shrink-0 rounded-sm border border-primary ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 data-[state=checked]:bg-primary data-[state=checked]:text-primary-foreground"
+                                                                id="new_personal"
+                                                            />
+                                                        </td>
+                                                        <td class="p-4 align-middle [&amp;:has([role=checkbox])]:pr-0">.</td>
+                                                        <td class="p-4 align-middle [&amp;:has([role=checkbox])]:pr-0">
+                                                            <button
+                                                                tabindex="0"
+                                                                id="create_user"
+                                                                class="ring-offset-background focus-visible:ring-ring inline-flex items-center justify-center whitespace-nowrap font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border-input bg-background hover:bg-accent hover:text-accent-foreground border h-9 rounded-md px-3 ml-auto gap-1.5 text-sm"
+                                                            >
+                                                                <svg viewBox="0 0 24 24" class="size-3.5">
+                                                                    <circle cx="12" cy="12" r="10" />
+                                                                    <path d="M8 12h8" />
+                                                                    <path d="M12 8v8" />
+                                                                </svg>
+                                                                Create
+                                                            </button>
+                                                        </td>
                                                     </tr>
                                                 </tbody>
                                                 <tfoot class="border-t bg-muted/50 font-medium [&amp;>tr]:last:border-b-0">
-                                                    <tr class="border-b transition-colors hover:bg-muted/50 data-[state=selected]:bg-muted">
-                                                        <td class="p-4 align-middle [&amp;:has([role=checkbox])]:pr-0" colspan="3">Total</td>
-                                                        <td class="p-4 align-middle [&amp;:has([role=checkbox])]:pr-0 text-right">$2,500.00</td>
+                                                    <tr class="border-b transition-colors data-[state=selected]:bg-muted">
+                                                        <td class="p-4 align-middle [&amp;:has([role=checkbox])]:pr-0" colspan="6">
+                                                            <button
+                                                                tabindex="0"
+                                                                id="add_user"
+                                                                data-token="test"
+                                                                class="ring-offset-background focus-visible:ring-ring inline-flex items-center justify-center whitespace-nowrap font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border-input bg-background hover:bg-accent hover:text-accent-foreground border h-9 rounded-md px-3 gap-1.5 text-sm"
+                                                            >
+                                                                <svg viewBox="0 0 24 24" class="size-3.5">
+                                                                    <circle cx="12" cy="12" r="10" />
+                                                                    <path d="M8 12h8" />
+                                                                    <path d="M12 8v8" />
+                                                                </svg>
+                                                                Add new user
+                                                            </button>
+                                                        </td>
                                                     </tr>
                                                 </tfoot>
                                             </table>
@@ -197,9 +233,45 @@
         </div>
 
         <script>
+            // setup dark/light mode button
             document.querySelector("#toggleDarkMode").onclick = () => {
                 let isDarkMode = document.documentElement.classList.toggle("dark");
                 localStorage.setItem("theme", isDarkMode ? "dark" : "light");
+            };
+
+            // get users + render
+            // fetch("/admin_cmds/users", {
+            //     method: "GET",
+            // })
+            //     .then((response) => response.text())
+            //     .then((data) => console.log(data));
+
+            // add user functionality
+            const toggle = () => {
+                document.querySelector("tfoot").classList.toggle("hidden");
+                document.querySelector("#new_user").classList.toggle("hidden");
+            };
+
+            document.querySelector("button#add_user").onclick = toggle;
+
+            document.querySelector("button#create_user").onclick = () => {
+                const elements = document.querySelectorAll("#new_personal, #new_email, #new_name");
+                if (!elements[0].value || !elements[1].value) return;
+                toggle();
+
+                fetch("/admin_cmds/new_user", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify({
+                        username: elements[0].value,
+                        email: elements[1].value,
+                        personal: elements[2].checked,
+                    }),
+                })
+                    .then((response) => response.json())
+                    .then((data) => console.log(data));
             };
         </script>
     </body>

@@ -22,23 +22,34 @@ app.get("/admin", async (req, res) => {
     // res.cookie("key", process.env.ADMIN_KEY, { path: "/admin", secure: true, httpOnly: true });
 
     if (!key || !key.includes(`key=${process.env.ADMIN_KEY}`)) {
-        return res.status(403).redirect("/public/admin_error.html");
+        return res.status(403).sendFile(path.join(__dirname, "../public", "admin_error.html"));
     }
     return res.status(200).sendFile(path.join(__dirname, "admin.html"));
 });
 
-app.get("/admin/users", async (req, res) => {
+app.get("/admin_cmds/users", async (req, res) => {
     const key = req.headers.cookie;
     if (!key || !key.includes(`key=${process.env.ADMIN_KEY}`)) {
-        return res.status(403).redirect("/public/admin_error.html");
+        return res.status(403).send("access denied");
     }
 
     const { rows } = await sql`SELECT * FROM users;`;
     return res.status(200).send(rows);
 });
 
+app.post("/admin_cmds/new_user", async (req, res) => {
+    const key = req.headers.cookie;
+    if (!key || !key.includes(`key=${process.env.ADMIN_KEY}`)) {
+        return res.status(403).send("access denied");
+    }
+
+    if (!req.body || !req.body.username || !req.body.email || req.body.personal == undefined) return res.status(400).send("Please fill in all fields");
+    const { result } = await sql`INSERT INTO users (username, email, personal) VALUES ('${req.body.username}', '${req.body.email}', ${req.body.personal.toUpperCase()});`;
+    return res.status(200).send(result);
+});
+
 app.post("/login", async (req, res) => {
-    // CREATE TABLE users (id SERIAL PRIMARY KEY, username VARCHAR(50) NOT NULL, last_login TIMESTAMP, auth_token TEXT);
+    // CREATE TABLE users (id SERIAL PRIMARY KEY, username VARCHAR(50) NOT NULL, email VARCHAR(100), personal BOOLEAN, last_login TIMESTAMP, auth_token TEXT);
     if (!req.body || !req.body.name || !req.body.password) return res.status(400).send("Please fill in all fields");
     if (req.body.password != process.env.DASHBOARD_LOGIN_PASS) return res.status(400).send("Wrong password.");
 
