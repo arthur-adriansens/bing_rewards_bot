@@ -21,13 +21,20 @@ app.get("/admin", async (req, res) => {
     const key = req.headers.cookie;
     // res.cookie("key", process.env.ADMIN_KEY, { path: "/admin", secure: true, httpOnly: true });
 
-    console.log(key, key?.includes(`key=${process.env.ADMIN_KEY}`));
+    if (!key || !key.includes(`key=${process.env.ADMIN_KEY}`)) {
+        return res.status(403).redirect("/public/admin_error.html");
+    }
+    return res.status(200).sendFile(path.join(__dirname, "admin.html"));
+});
+
+app.get("/admin/users", async (req, res) => {
+    const key = req.headers.cookie;
     if (!key || !key.includes(`key=${process.env.ADMIN_KEY}`)) {
         return res.status(403).redirect("/public/admin_error.html");
     }
 
-    // const { rows } = await sql`SELECT * FROM users;`;
-    return res.status(200).sendFile(path.join(__dirname, "admin.html"));
+    const { rows } = await sql`SELECT * FROM users;`;
+    return res.status(200).send(rows);
 });
 
 app.post("/login", async (req, res) => {
