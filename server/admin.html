@@ -135,14 +135,14 @@
                                                     </tr>
                                                 </thead>
                                                 <tbody class="[&amp;_tr:last-child]:border-0">
-                                                    <tr class="border-b transition-colors hover:bg-muted/50 data-[state=selected]:bg-muted">
+                                                    <tr id="template" class="border-b transition-colors hover:bg-muted/50 data-[state=selected]:bg-muted">
                                                         <td class="p-4 align-middle [&amp;:has([role=checkbox])]:pr-0 font-medium">1</td>
                                                         <td class="p-4 align-middle [&amp;:has([role=checkbox])]:pr-0">Arthur</td>
                                                         <td class="p-4 align-middle [&amp;:has([role=checkbox])]:pr-0">arthur.adriansens@gmail.com</td>
                                                         <td class="p-4 align-middle [&amp;:has([role=checkbox])]:pr-0">true</td>
                                                         <td class="p-4 align-middle [&amp;:has([role=checkbox])]:pr-0">Tue Nov 05 2024</td>
                                                         <!--new Date().toDateString()-->
-                                                        <td class="p-4 align-middle [&amp;:has([role=checkbox])]:pr-0">
+                                                        <td id="template_skip" class="p-4 align-middle [&amp;:has([role=checkbox])]:pr-0">
                                                             <button
                                                                 tabindex="0"
                                                                 onclick="navigator.clipboard.writeText(this?.dataset?.token);"
@@ -240,11 +240,22 @@
             };
 
             // get users + render
-            // fetch("/admin/users", {
-            //     method: "GET",
-            // })
-            //     .then((response) => response.text())
-            //     .then((data) => console.log(data));
+            fetch("/admin/users", {
+                method: "GET",
+            })
+                .then((response) => response.json())
+                .then((data) => {
+                    for (let user of data) {
+                        const new_element = document.querySelector("#template").cloneNode(true);
+                        new_element.id = "";
+                        new_element.classList.remove("hidden");
+                        new_element.querySelectorAll("td:not(#template_skip)").forEach((element, i) => {
+                            console.log(user[Object.keys(user)[i]]);
+                            element.innerHTML = user[Object.keys(user)[i]] || ".";
+                        });
+                        document.querySelector("tbody").appendChild(new_element);
+                    }
+                });
 
             // add user functionality
             const toggle = () => {
