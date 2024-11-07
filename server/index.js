@@ -21,6 +21,7 @@ app.get("/admin", async (req, res) => {
     const key = req.headers.cookie;
     res.cookie("key", process.env.ADMIN_KEY, { path: "/admin", secure: true, httpOnly: true });
 
+    console.log(key);
     if (!key || !key.includes(`key=${process.env.ADMIN_KEY}`)) {
         return res.status(403).redirect("/public/admin_error.html");
     }
