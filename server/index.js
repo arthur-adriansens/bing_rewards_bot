@@ -44,9 +44,8 @@ app.post("/admin/new_user", async (req, res) => {
         return res.status(403).send("access denied");
     }
 
-    console.log(req.body.personal);
     if (!req.body || !req.body.username || !req.body.email || req.body.personal == undefined) return res.status(400).send("Please fill in all fields");
-    const { result } = await sql`INSERT INTO users (username, email, personal) VALUES ('${req.body.username}', '${req.body.email}', ${req.body.personal.toUpperCase()});`;
+    const { result } = await sql`INSERT INTO users (username, email, personal) VALUES ('${req.body.username}', '${req.body.email}', ${req.body.personal});`;
     return res.status(200).send(result);
 });
 

@@ -267,7 +267,7 @@
                     body: JSON.stringify({
                         username: elements[0].value,
                         email: elements[1].value,
-                        personal: `${elements[2].checked}`,
+                        personal: elements[2].checked,
                     }),
                 })
                     .then((response) => response.json())
