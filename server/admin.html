@@ -329,7 +329,7 @@
                             element.innerHTML = user[Object.keys(user)[i]] || ".";
                         });
 
-                        const parent = document.getElementById("div1");
+                        const parent = document.querySelector("tbody");
                         parent.insertBefore(new_element, parent.firstChild);
                     }
                 });
