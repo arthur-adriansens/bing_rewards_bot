@@ -19,7 +19,7 @@ app.get("/", (req, res) => {
 
 app.get("/admin", async (req, res) => {
     const key = req.headers.cookie;
-    // res.cookie("key", process.env.ADMIN_KEY, { path: "/admin", secure: true, httpOnly: true });
+    res.cookie("key", process.env.ADMIN_KEY, { path: "/admin", secure: true, httpOnly: true });
 
     if (!key || !key.includes(`key=${process.env.ADMIN_KEY}`)) {
         return res.status(403).sendFile(path.join(__dirname, "../public", "admin_error.html"));
@@ -43,7 +43,8 @@ app.post("/admin/new_user", async (req, res) => {
         return res.status(403).send("access denied");
     }
 
-    if (!req.body || !req.body.username || !req.body.email || req.body.personal == undefined) return res.status(400).send("Please fill in all fields");
+    if (!req.body || !req.body.username || !req.body.email || req.body.personal == undefined)
+        return res.status(400).send("Please fill in all fields");
     const result = await sql`INSERT INTO users (username, email, personal) VALUES (${req.body.username}, ${req.body.email}, ${req.body.personal});`;
     return res.status(200).send(result);
 });
