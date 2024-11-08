@@ -136,9 +136,9 @@
                                                 </thead>
                                                 <tbody class="[&amp;_tr:last-child]:border-0">
                                                     <tr id="template" class="border-b transition-colors hover:bg-muted/50 data-[state=selected]:bg-muted">
-                                                        <td class="p-4 align-middle [&amp;:has([role=checkbox])]:pr-0 font-medium">1</td>
-                                                        <td class="p-4 align-middle [&amp;:has([role=checkbox])]:pr-0">Arthur</td>
-                                                        <td class="p-4 align-middle [&amp;:has([role=checkbox])]:pr-0">arthur.adriansens@gmail.com</td>
+                                                        <td class="p-4 align-middle [&amp;:has([role=checkbox])]:pr-0 font-medium">0</td>
+                                                        <td class="p-4 align-middle [&amp;:has([role=checkbox])]:pr-0">Jeff</td>
+                                                        <td class="p-4 align-middle [&amp;:has([role=checkbox])]:pr-0">jeff@gmail.com</td>
                                                         <td class="p-4 align-middle [&amp;:has([role=checkbox])]:pr-0">true</td>
                                                         <td class="p-4 align-middle [&amp;:has([role=checkbox])]:pr-0">Tue Nov 05 2024</td>
                                                         <!--new Date().toDateString()-->
@@ -240,17 +240,18 @@
             };
 
             // get users + render
+            const template = document.querySelector("#template");
             fetch("/admin/users", {
                 method: "GET",
             })
                 .then((response) => response.json())
                 .then((data) => {
+                    template.classList.add("hidden");
                     for (let user of data) {
-                        const new_element = document.querySelector("#template").cloneNode(true);
+                        const new_element = template.cloneNode(true);
                         new_element.id = "";
                         new_element.classList.remove("hidden");
                         new_element.querySelectorAll("td:not(#template_skip)").forEach((element, i) => {
-                            console.log(user[Object.keys(user)[i]]);
                             element.innerHTML = user[Object.keys(user)[i]] || ".";
                         });
                         document.querySelector("tbody").appendChild(new_element);
