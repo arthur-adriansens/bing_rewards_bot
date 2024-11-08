@@ -5,7 +5,7 @@ const express = require("express");
 const cors = require("cors");
 const path = require("path");
 const cookieParser = require("cookie-parser");
-require("dotenv").config(path.resolve(process.cwd(), ".env"));
+// require("dotenv").config(path.resolve(process.cwd(), ".env"));
 const { v4: uuidv4 } = require("uuid");
 
 // Setup express app
@@ -58,8 +58,7 @@ app.post("/admin/new_user", adminAuthMiddleware, async (req, res) => {
         return res.status(400).send("Please fill in all fields");
     }
 
-    const result =
-        await sql`INSERT INTO users (username, email, personal, auth_token) VALUES (${req.body.username}, ${req.body.email}, ${req.body.personal}, ${auth_token});`;
+    const result = await sql`INSERT INTO users (username, email, personal, auth_token) VALUES (${req.body.username}, ${req.body.email}, ${req.body.personal}, ${auth_token});`;
     return res.status(200).send(result);
 });
 
