@@ -20,6 +20,23 @@
                 document.documentElement.classList.toggle("dark", e.matches);
                 localStorage.removeItem("theme");
             });
+
+            function remove(element) {
+                if (!element) return;
+
+                const username = element.parentElement.parentElement.children[1].innerHTML;
+                fetch("/admin/remove_user", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify({
+                        username: username,
+                    }),
+                })
+                    .then((response) => response.json())
+                    .then((data) => console.log(data));
+            }
         </script>
     </head>
 
@@ -344,23 +361,6 @@
                     .then((response) => response.json())
                     .then((data) => console.log(data));
             };
-
-            function remove(element) {
-                if (!element) return;
-
-                const username = element.parentElement.parentElement.children[1].innerHTML;
-                fetch("/admin/remove_user", {
-                    method: "POST",
-                    headers: {
-                        "Content-Type": "application/json",
-                    },
-                    body: JSON.stringify({
-                        username: username,
-                    }),
-                })
-                    .then((response) => response.json())
-                    .then((data) => console.log(data));
-            }
         </script>
     </body>
 </html>
