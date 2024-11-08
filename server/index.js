@@ -64,10 +64,11 @@ app.post("/login", async (req, res) => {
     if (!req.body || !req.body.name || !req.body.password) return res.status(400).send("Please fill in all fields");
     if (req.body.password != process.env.DASHBOARD_LOGIN_PASS) return res.status(400).send("Wrong password. Please contact me for help.");
 
-    const { test } = await sql`SELECT * FROM users WHERE username = ${req.body.name};`;
-    const { test2 } = await sql`SELECT auth_token FROM users WHERE username = ${req.body.name};`;
+    if (req.body.name == "admin") return res.redirect("/admin");
+    const test = await sql`SELECT * FROM users WHERE username = ${req.body.name};`;
+    console.log(test);
 
-    res.status(200).send(`success: ${test}, also: ${test2}`);
+    res.status(200).sendFile(path.join(__dirname, "dashboard.html"));
 });
 
 app.listen(port, () => {
