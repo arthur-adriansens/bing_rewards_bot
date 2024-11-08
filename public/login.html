@@ -13,7 +13,10 @@
         <title>bot login</title>
         <script>
             const userPreference = localStorage.getItem("theme");
-            document.documentElement.classList.toggle("dark", userPreference ? userPreference == "dark" : window.matchMedia("(prefers-color-scheme: dark)").matches);
+            document.documentElement.classList.toggle(
+                "dark",
+                userPreference ? userPreference == "dark" : window.matchMedia("(prefers-color-scheme: dark)").matches
+            );
 
             window.matchMedia("(prefers-color-scheme: dark)").addEventListener("change", (e) => {
                 document.documentElement.classList.toggle("dark", e.matches);
@@ -34,7 +37,11 @@
                         <div class="p-6">
                             <div class="grid gap-4">
                                 <div class="grid gap-2">
-                                    <label class="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70" for="name">Voornaam</label>
+                                    <label
+                                        class="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                                        for="name"
+                                        >Voornaam</label
+                                    >
                                     <input
                                         class="border-input bg-background ring-offset-background placeholder:text-muted-foreground focus-visible:ring-ring flex h-10 w-full rounded-md border px-3 py-2 text-sm file:border-0 file:bg-transparent file:text-sm file:font-medium focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
                                         id="name"
@@ -43,7 +50,11 @@
                                     />
                                 </div>
                                 <div class="grid gap-2">
-                                    <label class="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70" for="password">Wachtwoord</label>
+                                    <label
+                                        class="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                                        for="password"
+                                        >Wachtwoord</label
+                                    >
                                     <div>
                                         <input
                                             class="border-input bg-background ring-offset-background placeholder:text-muted-foreground focus-visible:ring-ring flex h-10 w-full rounded-md border px-3 py-2 text-sm file:border-0 file:bg-transparent file:text-sm file:font-medium focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
@@ -69,12 +80,14 @@
         </div>
 
         <script>
+            const error_element = document.querySelector("#error-msg");
+
             document.querySelector("#login").onclick = async () => {
                 const name = document.querySelector("#name").value;
                 const password = document.querySelector("#password").value;
 
                 if (name == "" || password == "") {
-                    document.querySelector("#error-msg").classList.remove("hidden");
+                    error_element.classList.remove("hidden");
                     return;
                 }
 
@@ -87,9 +100,16 @@
                         name: name,
                         password: password,
                     }),
-                })
-                    .then((response) => response.text())
-                    .then((data) => console.log(data));
+                }).then(async (response) => {
+                    if (response.redirected) {
+                        window.location.href = response.url;
+                        return;
+                    }
+
+                    const text = await response.text();
+                    error_element.classList.remove("hidden");
+                    error_element.innerHTML = text;
+                });
             };
         </script>
     </body>
