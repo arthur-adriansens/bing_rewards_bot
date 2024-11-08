@@ -298,24 +298,24 @@
 
             // get users + render
             const template = document.querySelector("#template");
-            // fetch("/admin/users", {
-            //     method: "GET",
-            // })
-            //     .then((response) => response.json())
-            //     .then((data) => {
-            //         template.classList.add("hidden");
-            //         for (let user of data) {
-            //             const new_element = template.cloneNode(true);
-            //             new_element.id = "";
-            //             new_element.classList.remove("hidden");
-            //             new_element.querySelectorAll("td:not(#template_skip)").forEach((element, i) => {
-            //                 element.innerHTML = user[Object.keys(user)[i]] || ".";
-            //             });
+            fetch("/admin/users", {
+                method: "GET",
+            })
+                .then((response) => response.json())
+                .then((data) => {
+                    template.classList.add("hidden");
+                    for (let user of data) {
+                        const new_element = template.cloneNode(true);
+                        new_element.id = "";
+                        new_element.classList.remove("hidden");
+                        new_element.querySelectorAll("td:not(#template_skip)").forEach((element, i) => {
+                            element.innerHTML = user[Object.keys(user)[i]] || ".";
+                        });
 
-            //             const parent = document.getElementById("div1");
-            //             parent.insertBefore(new_element, parent.firstChild);
-            //         }
-            //     });
+                        const parent = document.getElementById("div1");
+                        parent.insertBefore(new_element, parent.firstChild);
+                    }
+                });
 
             // add user functionality
             const toggle = () => {
