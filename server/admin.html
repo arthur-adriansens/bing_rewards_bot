@@ -416,7 +416,7 @@
                                                         <td class="p-4 align-middle [&amp;:has([role=checkbox])]:pr-0">
                                                             <button
                                                                 tabindex="0"
-                                                                id="create_user_2"
+                                                                id="create_bot"
                                                                 class="ring-offset-background focus-visible:ring-ring inline-flex items-center justify-center whitespace-nowrap font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border-input bg-background hover:bg-accent hover:text-accent-foreground border h-9 rounded-md px-3 ml-auto gap-1.5 text-sm"
                                                             >
                                                                 <svg viewBox="0 0 24 24" class="size-3.5">
@@ -434,7 +434,7 @@
                                                         <td class="p-4 align-middle [&amp;:has([role=checkbox])]:pr-0" colspan="8">
                                                             <button
                                                                 tabindex="0"
-                                                                id="add_user_2"
+                                                                id="add_bot"
                                                                 data-token="test"
                                                                 class="ring-offset-background focus-visible:ring-ring inline-flex items-center justify-center whitespace-nowrap font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border-input bg-background hover:bg-accent hover:text-accent-foreground border h-9 rounded-md px-3 gap-1.5 text-sm"
                                                             >
@@ -443,7 +443,7 @@
                                                                     <path d="M8 12h8" />
                                                                     <path d="M12 8v8" />
                                                                 </svg>
-                                                                Add new user
+                                                                Add new bot
                                                             </button>
                                                         </td>
                                                     </tr>
@@ -489,17 +489,17 @@
 
             // add user functionality
             const toggle = (e) => {
-                const parent = e.target.id.includes("2") ? "#bots" : "#users";
+                const parent = e.target.id == "add_bot" || e.target.id == "create_bot" ? "#bots" : "#users";
                 document.querySelector(`${parent} tfoot`).classList.toggle("hidden");
                 document.querySelector(`${parent} #new_inputs`).classList.toggle("hidden");
             };
 
-            document.querySelector("button#add_user").onclick = document.querySelector("button#add_user_2").onclick = toggle;
+            document.querySelector("button#add_user").onclick = document.querySelector("button#add_bot").onclick = toggle;
 
-            document.querySelector("button#create_user").onclick = () => {
-                const elements = document.querySelectorAll("#new_personal, #new_email, #new_name");
+            document.querySelector("button#create_user").onclick = (e) => {
+                const elements = document.querySelectorAll("#new_name, #new_email");
                 if (!elements[0].value || !elements[1].value) return;
-                toggle();
+                toggle(e);
 
                 fetch("/admin/new_user", {
                     method: "POST",
@@ -509,6 +509,25 @@
                     body: JSON.stringify({
                         username: elements[0].value,
                         email: elements[1].value,
+                    }),
+                })
+                    .then((response) => response.json())
+                    .then((data) => console.log(data));
+            };
+
+            document.querySelector("button#create_bot").onclick = (e) => {
+                const elements = document.querySelectorAll("#new_2_email, #new_2_password, #new_2_personal");
+                if (!elements[0].value || !elements[1].value || !elements[2]) return;
+                toggle(e);
+
+                fetch("/admin/new_bot", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify({
+                        email: elements[0].value,
+                        password: elements[1].value,
                         personal: elements[2].checked,
                     }),
                 })

@@ -68,7 +68,21 @@ app.post("/admin/new_user", adminAuthMiddleware, async (req, res) => {
         return res.status(400).send("Please fill in all fields");
     }
 
+    // Check if email excist in bot botaccounts
+    const { rows } = await sql`SELECT * FROM botaccounts WHERE email = ${req.body.email};`;
+    // if (rows)
+
     const result = await sql`INSERT INTO users (username, email, auth_token) VALUES (${req.body.username}, ${req.body.email}, ${auth_token});`;
+    return res.status(200).send(result);
+});
+
+app.post("/admin/new_bot", adminAuthMiddleware, async (req, res) => {
+    if (!req.body || !req.body.email || !req.body.password || req.body.personal == undefined) {
+        return res.status(400).send("Please fill in all fields");
+    }
+
+    const hashedPassword = await bcrypt.hash(req.body.password, saltRounds);
+    const result = await sql`INSERT INTO botaccounts (email, password_hash, personal) VALUES (${req.body.email}, ${hashedPassword}, ${personal});`;
     return res.status(200).send(result);
 });
 
