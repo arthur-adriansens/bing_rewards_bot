@@ -3,27 +3,33 @@
 const { sql } = require("@vercel/postgres");
 const express = require("express");
 const cors = require("cors");
+const nocache = require("nocache");
 const path = require("path");
 const cookieParser = require("cookie-parser");
-// require("dotenv").config(path.resolve(process.cwd(), ".env"));
+if (process.env.NODE_ENV !== "production") {
+    require("dotenv").config(path.resolve(process.cwd(), ".env"));
+}
+const bcrypt = require("bcrypt");
 const { v4: uuidv4 } = require("uuid");
 
 // Setup express app
 const app = express();
 const port = process.env.PORT || 3000;
+const saltRounds = 10;
 app.use(cors());
+app.use(nocache());
 app.use(express.json());
 app.use(cookieParser());
 app.use("/public", express.static(path.join(__dirname, "../public")));
 
 async function authMiddleware(req, res, next) {
     if (!req.cookies.auth || !req.cookies.id) {
-        return res.status(401).send("Unauthorized: No token or id provided.");
+        return res.status(401).redirect("/");
     }
 
     // Check if token matches user id
     const { rows } = await sql`SELECT auth_token FROM users WHERE id = ${req.cookies.id}`;
-    if (rows.length == 0 || req.cookies.auth != rows[0].auth_token) return res.status(401).send("Unauthorized: Invalid token.");
+    if (rows.length == 0 || req.cookies.auth != rows[0].auth_token) return res.status(401).redirect("/");
 
     next();
 }
@@ -37,7 +43,11 @@ async function adminAuthMiddleware(req, res, next) {
 }
 // Ports
 app.get("/", (req, res) => {
-    res.sendFile(path.join(__dirname, "../public", "login.html"));
+    if (!req.cookies.auth || !req.cookies.id) {
+        return res.sendFile(path.join(__dirname, "../public", "login.html"));
+    }
+
+    return res.status(200).redirect("/dashboard");
 });
 
 app.get("/admin", async (req, res) => {
@@ -54,11 +64,11 @@ app.get("/admin/users", adminAuthMiddleware, async (req, res) => {
 });
 
 app.post("/admin/new_user", adminAuthMiddleware, async (req, res) => {
-    if (!req.body || !req.body.username || !req.body.email || req.body.personal == undefined) {
+    if (!req.body || !req.body.username || !req.body.email) {
         return res.status(400).send("Please fill in all fields");
     }
 
-    const result = await sql`INSERT INTO users (username, email, personal, auth_token) VALUES (${req.body.username}, ${req.body.email}, ${req.body.personal}, ${auth_token});`;
+    const result = await sql`INSERT INTO users (username, email, auth_token) VALUES (${req.body.username}, ${req.body.email}, ${auth_token});`;
     return res.status(200).send(result);
 });
 
@@ -69,7 +79,7 @@ app.post("/admin/remove_user", adminAuthMiddleware, async (req, res) => {
 });
 
 app.post("/login", async (req, res) => {
-    // CREATE TABLE users (id SERIAL PRIMARY KEY, username VARCHAR(50) NOT NULL, email VARCHAR(100), personal BOOLEAN, last_login TIMESTAMPTZ, auth_token TEXT);
+    // CREATE TABLE users (id SERIAL PRIMARY KEY, username VARCHAR(50) NOT NULL, email VARCHAR(100), last_login TIMESTAMPTZ, auth_token TEXT);
     if (!req.body || !req.body.name || !req.body.password) {
         return res.status(400).send("Please fill in all fields");
     }
@@ -81,8 +91,8 @@ app.post("/login", async (req, res) => {
         }
 
         // If authentication is successful, set a cookie or session token
-        res.cookie("auth", process.env.ADMIN_KEY, { httpOnly: true, secure: true });
-        return res.status(200).redirect("/dashboard");
+        res.cookie("key", process.env.ADMIN_KEY, { httpOnly: true, secure: true });
+        return res.status(200).redirect("/admin");
     }
 
     // Check if the regular user password matches
@@ -106,9 +116,20 @@ app.post("/login", async (req, res) => {
     res.status(200).redirect("/dashboard");
 });
 
-app.get("/dashboard", authMiddleware, (req, res) => {
-    sql`UPDATE users SET last_login = NOW() WHERE id = ${req.cookies.id}`;
-    res.sendFile(path.join(__dirname, "dashboard.html"));
+app.post("/logout", async (req, res) => {
+    res.clearCookie("auth");
+    res.clearCookie("id");
+    res.status(200).redirect("/");
+});
+
+app.get("/dashboard", authMiddleware, async (req, res) => {
+    // CREATE TABLE botAccounts (id SERIAL PRIMARY KEY, email VARCHAR(100), password_hash TEXT, personal BOOLEAN, last_collected TIMESTAMPTZ, points INTEGER, streak SMALLINT);
+    const { rows: bot_email } = await sql`UPDATE users SET last_login = NOW() WHERE id = ${req.cookies.id} RETURNING email;`;
+    if (!bot_email[0]?.email) return res.status(400).send("Database error. Please contact me for help.");
+
+    const { rows: botAccount } = await sql`SELECT * FROM botaccounts WHERE email = ${bot_email[0]?.email};`;
+    console.log(botAccount);
+    return res.sendFile(path.join(__dirname, "dashboard.html"));
 });
 
 app.listen(port, () => {

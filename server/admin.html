@@ -143,7 +143,7 @@
                                     <legend class="-ml-1 px-1 text-sm font-medium">Accounts list</legend>
                                     <div class="preview flex min-h-[350px] w-full justify-center p-10 items-center">
                                         <div class="relative w-full overflow-auto">
-                                            <table class="w-full caption-bottom text-sm users">
+                                            <table class="w-full caption-bottom text-sm" id="users">
                                                 <thead class="[&amp;_tr]:border-b">
                                                     <tr class="border-b transition-colors hover:bg-muted/50 data-[state=selected]:bg-muted">
                                                         <th
@@ -160,11 +160,6 @@
                                                             class="h-12 px-4 text-left align-middle font-medium text-muted-foreground [&amp;:has([role=checkbox])]:pr-0"
                                                         >
                                                             Email
-                                                        </th>
-                                                        <th
-                                                            class="h-12 px-4 text-left align-middle font-medium text-muted-foreground [&amp;:has([role=checkbox])]:pr-0"
-                                                        >
-                                                            Personal
                                                         </th>
                                                         <th
                                                             class="h-12 px-4 text-left align-middle font-medium text-muted-foreground [&amp;:has([role=checkbox])]:pr-0"
@@ -191,7 +186,6 @@
                                                         <td class="p-4 align-middle [&amp;:has([role=checkbox])]:pr-0 font-medium">0</td>
                                                         <td class="p-4 align-middle [&amp;:has([role=checkbox])]:pr-0">Jeff</td>
                                                         <td class="p-4 align-middle [&amp;:has([role=checkbox])]:pr-0">jeff@gmail.com</td>
-                                                        <td class="p-4 align-middle [&amp;:has([role=checkbox])]:pr-0">true</td>
                                                         <td class="p-4 align-middle [&amp;:has([role=checkbox])]:pr-0">Tue Nov 05 2024</td>
                                                         <!--new Date().toDateString()-->
                                                         <td id="template_skip" class="p-4 align-middle [&amp;:has([role=checkbox])]:pr-0">
@@ -231,7 +225,7 @@
                                                         </td>
                                                     </tr>
                                                     <tr
-                                                        id="new_user"
+                                                        id="new_inputs"
                                                         class="hidden border-b transition-colors data-[state=selected]:bg-muted bg-muted/50"
                                                     >
                                                         <td class="p-4 align-middle [&amp;:has([role=checkbox])]:pr-0 font-medium">.</td>
@@ -249,13 +243,6 @@
                                                                 id="new_email"
                                                                 type="email"
                                                                 placeholder="example@gmail.com"
-                                                            />
-                                                        </td>
-                                                        <td class="p-4 align-middle [&amp;:has([role=checkbox])]:pr-0">
-                                                            <input
-                                                                type="checkbox"
-                                                                class="peer h-4 w-4 shrink-0 rounded-sm border border-primary ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 data-[state=checked]:bg-primary data-[state=checked]:text-primary-foreground"
-                                                                id="new_personal"
                                                             />
                                                         </td>
                                                         <td class="p-4 align-middle [&amp;:has([role=checkbox])]:pr-0">.</td>
@@ -282,6 +269,172 @@
                                                             <button
                                                                 tabindex="0"
                                                                 id="add_user"
+                                                                data-token="test"
+                                                                class="ring-offset-background focus-visible:ring-ring inline-flex items-center justify-center whitespace-nowrap font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border-input bg-background hover:bg-accent hover:text-accent-foreground border h-9 rounded-md px-3 gap-1.5 text-sm"
+                                                            >
+                                                                <svg viewBox="0 0 24 24" class="size-3.5">
+                                                                    <circle cx="12" cy="12" r="10" />
+                                                                    <path d="M8 12h8" />
+                                                                    <path d="M12 8v8" />
+                                                                </svg>
+                                                                Add new user
+                                                            </button>
+                                                        </td>
+                                                    </tr>
+                                                </tfoot>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </fieldset>
+                                <fieldset class="h-full w-full grid gap-6 rounded-lg border p-4 bg-background">
+                                    <legend class="-ml-1 px-1 text-sm font-medium">Bots list</legend>
+                                    <div class="preview flex min-h-[350px] w-full justify-center p-10 items-center">
+                                        <div class="relative w-full overflow-auto">
+                                            <table class="w-full caption-bottom text-sm" id="bots">
+                                                <thead class="[&amp;_tr]:border-b">
+                                                    <tr class="border-b transition-colors hover:bg-muted/50 data-[state=selected]:bg-muted">
+                                                        <th
+                                                            class="h-12 px-4 text-left align-middle font-medium text-muted-foreground [&amp;:has([role=checkbox])]:pr-0 w-[100px]"
+                                                        >
+                                                            Id
+                                                        </th>
+                                                        <th
+                                                            class="h-12 px-4 text-left align-middle font-medium text-muted-foreground [&amp;:has([role=checkbox])]:pr-0"
+                                                        >
+                                                            Email
+                                                        </th>
+                                                        <th
+                                                            class="h-12 px-4 text-left align-middle font-medium text-muted-foreground [&amp;:has([role=checkbox])]:pr-0"
+                                                        >
+                                                            Password
+                                                        </th>
+                                                        <th
+                                                            class="h-12 px-4 text-left align-middle font-medium text-muted-foreground [&amp;:has([role=checkbox])]:pr-0"
+                                                        >
+                                                            Personal
+                                                        </th>
+                                                        <th
+                                                            class="h-12 px-4 text-left align-middle font-medium text-muted-foreground [&amp;:has([role=checkbox])]:pr-0"
+                                                        >
+                                                            last_collected
+                                                        </th>
+                                                        <th
+                                                            class="h-12 px-4 text-left align-middle font-medium text-muted-foreground [&amp;:has([role=checkbox])]:pr-0"
+                                                        >
+                                                            points
+                                                        </th>
+                                                        <th
+                                                            class="h-12 px-4 text-left align-middle font-medium text-muted-foreground [&amp;:has([role=checkbox])]:pr-0"
+                                                        >
+                                                            streak
+                                                        </th>
+                                                        <th
+                                                            class="border-l h-12 px-0 text-center align-middle font-medium text-muted-foreground [&amp;:has([role=checkbox])]:pr-0"
+                                                        >
+                                                            Remove
+                                                        </th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody class="[&amp;_tr:last-child]:border-0">
+                                                    <tr
+                                                        id="template_2"
+                                                        class="border-b transition-colors hover:bg-muted/50 data-[state=selected]:bg-muted"
+                                                    >
+                                                        <td class="p-4 align-middle [&amp;:has([role=checkbox])]:pr-0 font-medium">0</td>
+                                                        <td class="p-4 align-middle [&amp;:has([role=checkbox])]:pr-0">Jeff</td>
+                                                        <td id="template_skip" class="p-4 align-middle [&amp;:has([role=checkbox])]:pr-0">
+                                                            <button
+                                                                tabindex="0"
+                                                                onclick="navigator.clipboard.writeText(this?.dataset?.token);"
+                                                                data-token="test"
+                                                                class="ring-offset-background focus-visible:ring-ring inline-flex items-center justify-center whitespace-nowrap font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border-input bg-background hover:bg-accent hover:text-accent-foreground border h-9 rounded-md px-3 ml-auto gap-1.5 text-sm"
+                                                            >
+                                                                <svg viewBox="0 0 24 24" class="size-3.5">
+                                                                    <rect width="8" height="4" x="8" y="2" rx="1" ry="1" />
+                                                                    <path d="M8 4H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2" />
+                                                                    <path d="M16 4h2a2 2 0 0 1 2 2v4" />
+                                                                    <path d="M21 14H11" />
+                                                                    <path d="m15 10-4 4 4 4" />
+                                                                </svg>
+                                                                Copy
+                                                            </button>
+                                                        </td>
+                                                        <td class="p-4 align-middle [&amp;:has([role=checkbox])]:pr-0">true</td>
+                                                        <td class="p-4 align-middle [&amp;:has([role=checkbox])]:pr-0">Tue Nov 05 2024</td>
+                                                        <td class="p-4 align-middle [&amp;:has([role=checkbox])]:pr-0">2000</td>
+                                                        <td class="p-4 align-middle [&amp;:has([role=checkbox])]:pr-0">2</td>
+                                                        <td
+                                                            id="template_skip"
+                                                            class="p-4 align-middle border-l flex justify-center [&amp;:has([role=checkbox])]:pr-0"
+                                                        >
+                                                            <button
+                                                                tabindex="0"
+                                                                onclick="remove(this)"
+                                                                class="ring-offset-background focus-visible:ring-ring inline-flex items-center justify-center whitespace-nowrap font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border-input bg-background hover:bg-accent hover:text-accent-foreground border h-9 rounded-md px-3 gap-1.5 text-sm"
+                                                            >
+                                                                <svg viewBox="0 0 24 24" class="size-3.5">
+                                                                    <path d="M3 6h18" />
+                                                                    <path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6" />
+                                                                    <path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2" />
+                                                                    <line x1="10" x2="10" y1="11" y2="17" />
+                                                                    <line x1="14" x2="14" y1="11" y2="17" />
+                                                                </svg>
+                                                            </button>
+                                                        </td>
+                                                    </tr>
+                                                    <tr
+                                                        id="new_inputs"
+                                                        class="hidden border-b transition-colors data-[state=selected]:bg-muted bg-muted/50"
+                                                    >
+                                                        <td class="p-4 align-middle [&amp;:has([role=checkbox])]:pr-0 font-medium">.</td>
+                                                        <td class="p-4 align-middle [&amp;:has([role=checkbox])]:pr-0">
+                                                            <input
+                                                                class="border-input bg-background ring-offset-background placeholder:text-muted-foreground focus-visible:ring-ring flex h-10 w-full rounded-md border px-3 py-2 text-sm file:border-0 file:bg-transparent file:text-sm file:font-medium focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                                                                id="new_2_email"
+                                                                type="text"
+                                                                placeholder="jeff@gmail.com"
+                                                            />
+                                                        </td>
+                                                        <td class="p-4 align-middle [&amp;:has([role=checkbox])]:pr-0">
+                                                            <input
+                                                                class="border-input bg-background ring-offset-background placeholder:text-muted-foreground focus-visible:ring-ring flex h-10 w-full rounded-md border px-3 py-2 text-sm file:border-0 file:bg-transparent file:text-sm file:font-medium focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                                                                id="new_2_password"
+                                                                type="text"
+                                                                placeholder="abc123"
+                                                            />
+                                                        </td>
+                                                        <td class="p-4 align-middle [&amp;:has([role=checkbox])]:pr-0">
+                                                            <input
+                                                                type="checkbox"
+                                                                class="peer h-4 w-4 shrink-0 rounded-sm border border-primary ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 data-[state=checked]:bg-primary data-[state=checked]:text-primary-foreground"
+                                                                id="new_2_personal"
+                                                            />
+                                                        </td>
+                                                        <td class="p-4 align-middle [&amp;:has([role=checkbox])]:pr-0">.</td>
+                                                        <td class="p-4 align-middle [&amp;:has([role=checkbox])]:pr-0">.</td>
+                                                        <td class="p-4 align-middle [&amp;:has([role=checkbox])]:pr-0">.</td>
+                                                        <td class="p-4 align-middle [&amp;:has([role=checkbox])]:pr-0">
+                                                            <button
+                                                                tabindex="0"
+                                                                id="create_user_2"
+                                                                class="ring-offset-background focus-visible:ring-ring inline-flex items-center justify-center whitespace-nowrap font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border-input bg-background hover:bg-accent hover:text-accent-foreground border h-9 rounded-md px-3 ml-auto gap-1.5 text-sm"
+                                                            >
+                                                                <svg viewBox="0 0 24 24" class="size-3.5">
+                                                                    <circle cx="12" cy="12" r="10" />
+                                                                    <path d="M8 12h8" />
+                                                                    <path d="M12 8v8" />
+                                                                </svg>
+                                                                Create
+                                                            </button>
+                                                        </td>
+                                                    </tr>
+                                                </tbody>
+                                                <tfoot class="border-t bg-muted/50 font-medium [&amp;>tr]:last:border-b-0">
+                                                    <tr class="border-b transition-colors data-[state=selected]:bg-muted">
+                                                        <td class="p-4 align-middle [&amp;:has([role=checkbox])]:pr-0" colspan="8">
+                                                            <button
+                                                                tabindex="0"
+                                                                id="add_user_2"
                                                                 data-token="test"
                                                                 class="ring-offset-background focus-visible:ring-ring inline-flex items-center justify-center whitespace-nowrap font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border-input bg-background hover:bg-accent hover:text-accent-foreground border h-9 rounded-md px-3 gap-1.5 text-sm"
                                                             >
@@ -335,12 +488,13 @@
                 });
 
             // add user functionality
-            const toggle = () => {
-                document.querySelector("tfoot").classList.toggle("hidden");
-                document.querySelector("#new_user").classList.toggle("hidden");
+            const toggle = (e) => {
+                const parent = e.target.id.includes("2") ? "#bots" : "#users";
+                document.querySelector(`${parent} tfoot`).classList.toggle("hidden");
+                document.querySelector(`${parent} #new_inputs`).classList.toggle("hidden");
             };
 
-            document.querySelector("button#add_user").onclick = toggle;
+            document.querySelector("button#add_user").onclick = document.querySelector("button#add_user_2").onclick = toggle;
 
             document.querySelector("button#create_user").onclick = () => {
                 const elements = document.querySelectorAll("#new_personal, #new_email, #new_name");

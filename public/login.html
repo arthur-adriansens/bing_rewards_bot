@@ -31,7 +31,52 @@
                 <div class="w-full h-screen flex items-center justify-center px-4 theme-zinc">
                     <div class="bg-card text-card-foreground rounded-lg border shadow-sm mx-auto max-w-sm">
                         <div class="flex flex-col space-y-1.5 p-6 pb-0">
-                            <h3 class="font-semibold tracking-tight text-2xl">Login</h3>
+                            <div class="flex items-center">
+                                <h3 class="font-semibold tracking-tight text-2xl">Login</h3>
+                                <svg viewBox="0 0 200 200" id="loading" class="size-5 mx-2 opacity-0">
+                                    <radialGradient id="a12" cy=".66" fy=".66" cx=".3125" fx=".3125" gradientTransform="scale(1.5)">
+                                        <stop offset="0" stop-color="white"></stop>
+                                        <stop offset=".3" stop-color="white" stop-opacity=".9"></stop>
+                                        <stop offset=".6" stop-color="white" stop-opacity=".6"></stop>
+                                        <stop offset=".8" stop-color="white" stop-opacity=".3"></stop>
+                                        <stop offset="1" stop-color="white" stop-opacity="0"></stop>
+                                    </radialGradient>
+                                    <circle
+                                        transform-origin="center"
+                                        fill="none"
+                                        stroke="url(#a12)"
+                                        stroke-width="15"
+                                        stroke-linecap="round"
+                                        stroke-dasharray="200 1000"
+                                        stroke-dashoffset="0"
+                                        cx="100"
+                                        cy="100"
+                                        r="70"
+                                    >
+                                        <animateTransform
+                                            type="rotate"
+                                            attributeName="transform"
+                                            calcMode="spline"
+                                            dur="2"
+                                            values="0;360"
+                                            keyTimes="0;1"
+                                            keySplines="0 0 1 1"
+                                            repeatCount="indefinite"
+                                        ></animateTransform>
+                                    </circle>
+                                    <circle
+                                        transform-origin="center"
+                                        fill="none"
+                                        opacity=".2"
+                                        stroke="white"
+                                        stroke-width="15"
+                                        stroke-linecap="round"
+                                        cx="100"
+                                        cy="100"
+                                        r="70"
+                                    ></circle>
+                                </svg>
+                            </div>
                             <p class="text-muted-foreground text-sm hidden" id="error-msg">Please fill in all fields.</p>
                         </div>
                         <div class="p-6">
@@ -81,13 +126,16 @@
 
         <script>
             const error_element = document.querySelector("#error-msg");
+            const loading = document.querySelector("#loading").classList;
 
             document.querySelector("#login").onclick = async () => {
+                loading.remove("opacity-0");
                 const name = document.querySelector("#name").value;
                 const password = document.querySelector("#password").value;
 
                 if (name == "" || password == "") {
                     error_element.classList.remove("hidden");
+                    loading.add("opacity-0");
                     return;
                 }
 
@@ -109,6 +157,7 @@
                     const text = await response.text();
                     error_element.classList.remove("hidden");
                     error_element.innerHTML = text;
+                    loading.add("opacity-0");
                 });
             };
         </script>

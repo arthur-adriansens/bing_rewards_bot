@@ -109,14 +109,15 @@
                                 <h1 class="text-xl font-semibold">Bing chilling dashboard</h1>
                                 <button
                                     tabindex="0"
+                                    id="logout"
                                     class="ring-offset-background focus-visible:ring-ring inline-flex items-center justify-center whitespace-nowrap font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border-input bg-background hover:bg-accent hover:text-accent-foreground border h-9 rounded-md px-3 ml-auto gap-1.5 text-sm"
                                 >
                                     <svg viewBox="0 0 24 24" class="size-3.5">
-                                        <path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"></path>
-                                        <polyline points="16 6 12 2 8 6"></polyline>
-                                        <line x1="12" x2="12" y1="2" y2="15"></line>
+                                        <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
+                                        <polyline points="16 17 21 12 16 7" />
+                                        <line x1="21" x2="9" y1="12" y2="12" />
                                     </svg>
-                                    Share
+                                    <p>Log out</p>
                                 </button>
                             </header>
                             <main class="grid flex-1 gap-4 overflow-auto p-4 grid-rows-2 grid-cols-1 md:grid-cols-2 xl:grid-cols-3 pattern">
@@ -156,6 +157,24 @@
                                                     class="border-input bg-background ring-offset-background focus-visible:ring-ring aria-[invalid]:border-destructive data-[placeholder]:[&amp;>span]:text-muted-foreground flex h-10 w-full items-center justify-between rounded-md border px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 relative"
                                                 >
                                                     <span class="overflow-x-auto whitespace-nowrap no-scrollbar-fade w-full"> Tue Nov 05 2024 19:38:07 GMT+0100 (Central European Standard Time) </span>
+                                                </div>
+                                                <div class="grid grid-cols-2 gap-4" style="grid-template-rows: 1fr;">
+                                                    <div class="flex flex-col gap-3">
+                                                        <label class="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70" for="top-p">Points</label>
+                                                        <div
+                                                            class="border-input bg-background ring-offset-background placeholder:text-muted-foreground focus-visible:ring-ring flex h-10 w-full rounded-md border px-3 py-2 text-sm file:border-0 file:bg-transparent file:text-sm file:font-medium focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                                                        >
+                                                            <span class="overflow-x-auto whitespace-nowrap no-scrollbar-fade w-full">70.000</span>
+                                                        </div>
+                                                    </div>
+                                                    <div class="flex flex-col gap-3">
+                                                        <label class="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70" for="top-p">Streak</label>
+                                                        <div
+                                                            class="border-input bg-background ring-offset-background placeholder:text-muted-foreground focus-visible:ring-ring flex h-10 w-full rounded-md border px-3 py-2 text-sm file:border-0 file:bg-transparent file:text-sm file:font-medium focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                                                        >
+                                                            <span class="overflow-x-auto whitespace-nowrap no-scrollbar-fade w-full">100</span>
+                                                        </div>
+                                                    </div>
                                                 </div>
                                             </div>
                                         </div>
@@ -197,6 +216,20 @@
             document.querySelector("#toggleDarkMode").onclick = () => {
                 let isDarkMode = document.documentElement.classList.toggle("dark");
                 localStorage.setItem("theme", isDarkMode ? "dark" : "light");
+            };
+
+            document.querySelector("#logout").onclick = () => {
+                fetch("/logout", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                }).then(async (response) => {
+                    if (response.redirected) {
+                        window.location.href = response.url;
+                        return;
+                    }
+                });
             };
         </script>
     </body>
