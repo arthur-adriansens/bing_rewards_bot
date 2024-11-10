@@ -25,6 +25,7 @@ module.exports = function (app) {
             const result = await put(fileName, req.file.buffer, {
                 access: "public",
                 addRandomSuffix: false,
+                contentType: "image/png",
             });
 
             res.json(result);
