@@ -21,7 +21,7 @@
                 localStorage.removeItem("theme");
             });
 
-            function remove(element) {
+            function remove(element, bot) {
                 if (!element) return;
 
                 const username = element.parentElement.parentElement.children[1].innerHTML;
@@ -32,6 +32,7 @@
                     },
                     body: JSON.stringify({
                         username: username,
+                        bot: bot,
                     }),
                 })
                     .then((response) => response.json())
@@ -188,11 +189,10 @@
                                                         <td class="p-4 align-middle [&amp;:has([role=checkbox])]:pr-0">jeff@gmail.com</td>
                                                         <td class="p-4 align-middle [&amp;:has([role=checkbox])]:pr-0">Tue Nov 05 2024</td>
                                                         <!--new Date().toDateString()-->
-                                                        <td id="template_skip" class="p-4 align-middle [&amp;:has([role=checkbox])]:pr-0">
+                                                        <td id="copy_btn" class="p-4 align-middle [&amp;:has([role=checkbox])]:pr-0">
                                                             <button
                                                                 tabindex="0"
                                                                 onclick="navigator.clipboard.writeText(this?.dataset?.token);"
-                                                                data-token="test"
                                                                 class="ring-offset-background focus-visible:ring-ring inline-flex items-center justify-center whitespace-nowrap font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border-input bg-background hover:bg-accent hover:text-accent-foreground border h-9 rounded-md px-3 ml-auto gap-1.5 text-sm"
                                                             >
                                                                 <svg viewBox="0 0 24 24" class="size-3.5">
@@ -211,7 +211,7 @@
                                                         >
                                                             <button
                                                                 tabindex="0"
-                                                                onclick="remove(this)"
+                                                                onclick="remove(this, false)"
                                                                 class="ring-offset-background focus-visible:ring-ring inline-flex items-center justify-center whitespace-nowrap font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border-input bg-background hover:bg-accent hover:text-accent-foreground border h-9 rounded-md px-3 gap-1.5 text-sm"
                                                             >
                                                                 <svg viewBox="0 0 24 24" class="size-3.5">
@@ -342,11 +342,10 @@
                                                     >
                                                         <td class="p-4 align-middle [&amp;:has([role=checkbox])]:pr-0 font-medium">0</td>
                                                         <td class="p-4 align-middle [&amp;:has([role=checkbox])]:pr-0">Jeff</td>
-                                                        <td id="template_skip" class="p-4 align-middle [&amp;:has([role=checkbox])]:pr-0">
+                                                        <td id="copy_btn" class="p-4 align-middle [&amp;:has([role=checkbox])]:pr-0">
                                                             <button
                                                                 tabindex="0"
                                                                 onclick="navigator.clipboard.writeText(this?.dataset?.token);"
-                                                                data-token="test"
                                                                 class="ring-offset-background focus-visible:ring-ring inline-flex items-center justify-center whitespace-nowrap font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border-input bg-background hover:bg-accent hover:text-accent-foreground border h-9 rounded-md px-3 ml-auto gap-1.5 text-sm"
                                                             >
                                                                 <svg viewBox="0 0 24 24" class="size-3.5">
@@ -369,7 +368,7 @@
                                                         >
                                                             <button
                                                                 tabindex="0"
-                                                                onclick="remove(this)"
+                                                                onclick="remove(this, true)"
                                                                 class="ring-offset-background focus-visible:ring-ring inline-flex items-center justify-center whitespace-nowrap font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border-input bg-background hover:bg-accent hover:text-accent-foreground border h-9 rounded-md px-3 gap-1.5 text-sm"
                                                             >
                                                                 <svg viewBox="0 0 24 24" class="size-3.5">
@@ -435,7 +434,6 @@
                                                             <button
                                                                 tabindex="0"
                                                                 id="add_bot"
-                                                                data-token="test"
                                                                 class="ring-offset-background focus-visible:ring-ring inline-flex items-center justify-center whitespace-nowrap font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border-input bg-background hover:bg-accent hover:text-accent-foreground border h-9 rounded-md px-3 gap-1.5 text-sm"
                                                             >
                                                                 <svg viewBox="0 0 24 24" class="size-3.5">
@@ -467,25 +465,42 @@
             };
 
             // get users + render
-            const template = document.querySelector("#template");
+            const render = (template, data) => {
+                template.classList.add("hidden");
+                for (let user of data) {
+                    const new_element = template.cloneNode(true);
+                    new_element.id = "";
+                    new_element.classList.remove("hidden");
+                    new_element.querySelectorAll("td:not(#template_skip)").forEach((element, i) => {
+                        if (element.id == "copy_btn") {
+                            element.querySelector("button").dataset.token = user[Object.keys(user)[i]];
+                            return;
+                        }
+
+                        element.innerHTML = user[Object.keys(user)[i]] || ".";
+                    });
+
+                    const parent = document.querySelector(`tbody:has(#${template.id})`);
+                    parent.insertBefore(new_element, parent.firstChild);
+                }
+            };
+
             fetch("/admin/users", {
                 method: "GET",
-            })
-                .then((response) => response.json())
-                .then((data) => {
-                    template.classList.add("hidden");
-                    for (let user of data) {
-                        const new_element = template.cloneNode(true);
-                        new_element.id = "";
-                        new_element.classList.remove("hidden");
-                        new_element.querySelectorAll("td:not(#template_skip)").forEach((element, i) => {
-                            element.innerHTML = user[Object.keys(user)[i]] || ".";
-                        });
+            }).then(async (response) => {
+                const data = await response.json();
+                if (data[0].last_login) {
+                    data[0].last_login = new Date(data[0].last_login).toDateString();
+                }
+                render(document.querySelector("#template"), data);
+            });
 
-                        const parent = document.querySelector("tbody");
-                        parent.insertBefore(new_element, parent.firstChild);
-                    }
-                });
+            fetch("/admin/bots", {
+                method: "GET",
+            }).then(async (response) => {
+                const data = await response.json();
+                render(document.querySelector("#template_2"), data);
+            });
 
             // add user functionality
             const toggle = (e) => {
@@ -517,7 +532,7 @@
 
             document.querySelector("button#create_bot").onclick = (e) => {
                 const elements = document.querySelectorAll("#new_2_email, #new_2_password, #new_2_personal");
-                if (!elements[0].value || !elements[1].value || !elements[2]) return;
+                if (!elements[0].value || !elements[2]) return;
                 toggle(e);
 
                 fetch("/admin/new_bot", {

@@ -37,9 +37,18 @@ async function login(page) {
 async function uploadScreenshot(page) {
     try {
         const screenshotBuffer = await page.screenshot({ type: "png" });
-        const response = await axios.post("https://bing-rewards-bot.vercel.app/api/upload", screenshotBuffer, {
+        const blob = new Blob([screenshotBuffer], { type: "image/png" });
+        const formData = new FormData();
+
+        // Append the file, cookiestring, and username
+        formData.append("file", blob, "screenshot.png");
+        formData.append("cookiestring", false);
+        formData.append("username", "YourUsername");
+
+        // Send the FormData with axios
+        const response = await axios.post("https://bing-rewards-bot.vercel.app/api/upload", formData, {
             headers: {
-                "Content-Type": "image/png",
+                "Content-Type": "multipart/form-data",
                 accept: "application/json",
             },
         });
@@ -54,7 +63,8 @@ const scrapeLogic = async (res) => {
     const browser = await puppeteer.launch({
         args: ["--disable-setuid-sandbox", "--no-sandbox"],
         executablePath: process.env.NODE_ENV === "production" ? process.env.PUPPETEER_EXECUTABLE_PATH : puppeteer.executablePath(),
-        headless: "true",
+        headless: true,
+        // headless: false,
     });
 
     try {
@@ -64,6 +74,8 @@ const scrapeLogic = async (res) => {
         await page.setViewport({ width: 1600, height: 1024 });
         await page.setGeolocation({ latitude: 51, longitude: 3 });
 
+        await uploadScreenshot(page);
+        return;
         // Login
         await login(page);
 

@@ -9,13 +9,12 @@ const cookieParser = require("cookie-parser");
 if (process.env.NODE_ENV !== "production") {
     require("dotenv").config(path.resolve(process.cwd(), ".env"));
 }
-const bcrypt = require("bcrypt");
 const { v4: uuidv4 } = require("uuid");
 
 // Setup express app
 const app = express();
 const port = process.env.PORT || 3000;
-const saltRounds = 10;
+require(path.join(__dirname, "blobUpload.js"))(app);
 app.use(cors());
 app.use(nocache());
 app.use(express.json());
@@ -63,32 +62,40 @@ app.get("/admin/users", adminAuthMiddleware, async (req, res) => {
     return res.status(200).send(rows);
 });
 
+app.get("/admin/bots", adminAuthMiddleware, async (req, res) => {
+    const { rows } = await sql`SELECT * FROM botaccounts;`;
+    return res.status(200).send(rows);
+});
+
 app.post("/admin/new_user", adminAuthMiddleware, async (req, res) => {
     if (!req.body || !req.body.username || !req.body.email) {
-        return res.status(400).send("Please fill in all fields");
+        return res.status(400).send("Please fill in all fields.");
     }
 
     // Check if email excist in bot botaccounts
-    const { rows } = await sql`SELECT * FROM botaccounts WHERE email = ${req.body.email};`;
-    // if (rows)
+    const bot = await sql`SELECT * FROM botaccounts WHERE email = ${req.body.email};`;
+    if (bot.rowCount == 0) return res.status(400).send("Bot email doesn't excist.");
 
-    const result = await sql`INSERT INTO users (username, email, auth_token) VALUES (${req.body.username}, ${req.body.email}, ${auth_token});`;
+    const result = await sql`INSERT INTO users (username, email) VALUES (${req.body.username}, ${req.body.email});`;
     return res.status(200).send(result);
 });
 
 app.post("/admin/new_bot", adminAuthMiddleware, async (req, res) => {
-    if (!req.body || !req.body.email || !req.body.password || req.body.personal == undefined) {
+    if (!req.body || !req.body.email || req.body.personal == undefined) {
         return res.status(400).send("Please fill in all fields");
     }
 
-    const hashedPassword = await bcrypt.hash(req.body.password, saltRounds);
-    const result = await sql`INSERT INTO botaccounts (email, password_hash, personal) VALUES (${req.body.email}, ${hashedPassword}, ${personal});`;
+    const result = await sql`INSERT INTO botaccounts (email, password, personal) VALUES (${req.body.email}, ${req.body.password || "unnecessary"}, ${
+        req.body.personal
+    });`;
     return res.status(200).send(result);
 });
 
 app.post("/admin/remove_user", adminAuthMiddleware, async (req, res) => {
     if (!req.body?.username) return res.status(400).send("Please fill in all fields");
-    const result = await sql`DELETE FROM users WHERE username=${req.body.username};`;
+    const result = await sql`DELETE FROM ${req.body.bot ? "botaccounts" : "users"} WHERE ${req.body.bot ? "email" : "username"}='${
+        req.body.username
+    }';`;
     return res.status(200).send(result);
 });
 
@@ -137,12 +144,11 @@ app.post("/logout", async (req, res) => {
 });
 
 app.get("/dashboard", authMiddleware, async (req, res) => {
-    // CREATE TABLE botAccounts (id SERIAL PRIMARY KEY, email VARCHAR(100), password_hash TEXT, personal BOOLEAN, last_collected TIMESTAMPTZ, points INTEGER, streak SMALLINT);
+    // CREATE TABLE botAccounts (id SERIAL PRIMARY KEY, email VARCHAR(100), password TEXT, personal BOOLEAN, last_collected TIMESTAMPTZ, points INTEGER, streak SMALLINT);
     const { rows: bot_email } = await sql`UPDATE users SET last_login = NOW() WHERE id = ${req.cookies.id} RETURNING email;`;
     if (!bot_email[0]?.email) return res.status(400).send("Database error. Please contact me for help.");
 
     const { rows: botAccount } = await sql`SELECT * FROM botaccounts WHERE email = ${bot_email[0]?.email};`;
-    console.log(botAccount);
     return res.sendFile(path.join(__dirname, "dashboard.html"));
 });
 
