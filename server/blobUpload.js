@@ -24,7 +24,7 @@ module.exports = function (app) {
             // Upload the file buffer
             const result = await put(fileName, req.file.buffer, {
                 access: "public",
-                addRandomSuffix: false,t
+                addRandomSuffix: false,
             });
 
             res.json(result);
