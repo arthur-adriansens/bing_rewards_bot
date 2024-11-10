@@ -2,6 +2,7 @@
 
 // SETUP
 const puppeteer = require("puppeteer-extra");
+const { sql } = require("@vercel/postgres");
 const prompt = require("prompt-sync")();
 const fs = require("fs").promises;
 const axios = require("axios");
@@ -14,7 +15,7 @@ puppeteer.use(StealthPlugin());
 async function login(page) {
     // Set login coockies (if excists)
     try {
-        const cookiesString = process.env.TEST_COOKIES || (await fs.readFile("./server/cookies.json"));
+        const cookiesString = process.env.TEST_COOKIES || (await fs.readFile("./bot/cookies.json"));
         const cookies = JSON.parse(cookiesString);
 
         await page.setCookie(...cookies);
@@ -25,7 +26,7 @@ async function login(page) {
         prompt("Please login manually. Press enter (in this console) when you're logged in.");
 
         const cookies = await page.cookies("https://rewards.bing.com");
-        await fs.writeFile("./server/cookies.json", JSON.stringify(cookies));
+        await fs.writeFile("./bot/cookies.json", JSON.stringify(cookies));
 
         console.clear();
     }
@@ -34,7 +35,7 @@ async function login(page) {
     return;
 }
 
-async function uploadScreenshot(page) {
+async function uploadScreenshot(page, email) {
     try {
         const screenshotBuffer = await page.screenshot({ type: "png" });
         const blob = new Blob([screenshotBuffer], { type: "image/png" });
@@ -43,7 +44,7 @@ async function uploadScreenshot(page) {
         // Append the file, cookiestring, and username
         formData.append("file", blob, "screenshot.png");
         formData.append("cookiestring", "false");
-        formData.append("username", "YourUsername");
+        formData.append("username", email);
 
         // Send the FormData with axios
         const response = await axios.post("https://bing-rewards-bot.vercel.app/api/upload", formData, {
@@ -59,7 +60,7 @@ async function uploadScreenshot(page) {
 }
 
 // MAIN
-const scrapeLogic = async (res) => {
+async function scrapeLogic(email) {
     const browser = await puppeteer.launch({
         args: ["--disable-setuid-sandbox", "--no-sandbox"],
         executablePath: process.env.NODE_ENV === "production" ? process.env.PUPPETEER_EXECUTABLE_PATH : puppeteer.executablePath(),
@@ -74,8 +75,6 @@ const scrapeLogic = async (res) => {
         await page.setViewport({ width: 1600, height: 1024 });
         await page.setGeolocation({ latitude: 51, longitude: 3 });
 
-        await uploadScreenshot(page);
-        return;
         // Login
         await login(page);
 
@@ -119,20 +118,30 @@ const scrapeLogic = async (res) => {
         await page.keyboard.press("Enter");
 
         await new Promise((resolve) => setTimeout(resolve, 2000));
-        await uploadScreenshot(page);
 
-        for (let word of words.slice(1)) {
-            await new Promise((resolve) => setTimeout(resolve, 3500));
-            await page.goto(page.url().replace(/(q=)[^&]*/, `$1${word}`), { waitUntil: "networkidle0" });
-            console.log(word);
-        }
+        // for (let word of words.slice(1)) {
+        //     await new Promise((resolve) => setTimeout(resolve, 3500));
+        //     await page.goto(page.url().replace(/(q=)[^&]*/, `$1${word}`), { waitUntil: "networkidle0" });
+        //     console.log(word);
+        // }
+
+        await uploadScreenshot(page, email);
+        //UPDATE botaccounts SET last_collected=NOW(), points='2', streak='1' WHERE email='arthur.test2@outlook.com';
     } catch (e) {
         console.error("Error while running bot:", e);
     } finally {
         await browser.close();
         console.log("closed");
     }
-};
+}
 
-scrapeLogic();
-module.exports = { scrapeLogic };
+async function main() {
+    const { rows } = await sql`SELECT * FROM botaccounts;`;
+
+    for (let row of rows) {
+        scrapeLogic(row.email);
+    }
+}
+
+main();
+module.exports = { main };
