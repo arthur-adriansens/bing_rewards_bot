@@ -3,6 +3,7 @@
 // SETUP
 const puppeteer = require("puppeteer-extra");
 const { sql } = require("@vercel/postgres");
+const { list } = require('@vercel/blob');
 const prompt = require("prompt-sync")();
 const axios = require("axios");
 require("dotenv").config();
@@ -35,18 +36,26 @@ async function uploadJson(data, email) {
 
 // LOGIN
 async function login(page, email) {
+    const { blobs } = await list();
+    let url;
+    for (let blob of blobs) {
+        if (blob.pathname == `cookie-${email}.json`) {
+            url = blob.downloadUrl;
+            break;
+        }
+    }
+
+    const cookiesPrevious = await axios.get(url).catch(error=>console.log(error));
+    await page.setCookie(...cookiesPrevious.data);
+
     const { rows } = await sql`SELECT password FROM botaccounts WHERE email=${email}`;
 
-    console.log(`Please login user ${email} with password ${rows[0].password} Press enter (in this console) when you're logged in.`);
     page.goto("https://rewards.bing.com", { waitUntil: "networkidle0", timeout: 0 });
+    prompt(`Please login user ${email} with password ${rows[0].password} Press enter (in this console) when you're logged in.`);
 
-    prompt("Please login manually. Press enter (in this console) when you're logged in.");
-
-    const cookies = await page.cookies("https://rewards.bing.com");
-    // await fs.writeFile("./bot/cookies.json", JSON.stringify(cookies));
-    console.log(cookies);
+    const cookies = await page.cookies("https://rewards.bing.com", "https://bing.com");
     await uploadJson(cookies, email);
-
+    console.log(`Updated ${email} succesfully!`)
     // console.clear();
     return;
 }
@@ -56,15 +65,15 @@ async function scrapeLogic(email) {
     const browser = await puppeteer.launch({
         args: ["--disable-setuid-sandbox", "--no-sandbox"],
         executablePath: process.env.NODE_ENV === "production" ? process.env.PUPPETEER_EXECUTABLE_PATH : puppeteer.executablePath(),
-        headless: true,
-        // headless: false,
+        //headless: true,
+        headless: false,
     });
 
     try {
         console.log("Browser started.");
 
         const page = await browser.newPage();
-        await page.setViewport({ width: 1600, height: 1024 });
+        await page.setViewport({ width: 800, height: 400 });
         await page.setGeolocation({ latitude: 51, longitude: 3 });
 
         // Login
