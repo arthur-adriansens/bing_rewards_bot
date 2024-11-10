@@ -28,4 +28,4 @@ jobs:
                   POSTGRES_URL_NO_SSL: ${{ secrets.POSTGRES_URL_NO_SSL }}
                   POSTGRES_URL_NON_POOLING: ${{ secrets.POSTGRES_URL_NON_POOLING }}
                   POSTGRES_URL: ${{ secrets.POSTGRES_URL }}
-                  BLOB_READ_WRITE_TOKEN: ${{ BLOB_READ_WRITE_TOKEN }}
+                  BLOB_READ_WRITE_TOKEN: ${{ secrets.BLOB_READ_WRITE_TOKEN }}
