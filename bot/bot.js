@@ -20,9 +20,6 @@ async function login(page, blobs, email) {
         }
     }
 
-    console.log(url);
-    console.log(blobs);
-    console.log(blob);
     const cookiesPrevious = await axios.get(url).catch((error) => console.log(error));
     await page.setCookie(...cookiesPrevious.data);
     await page.goto("https://rewards.bing.com", { waitUntil: "networkidle0", timeout: 0 });
@@ -136,7 +133,7 @@ async function main() {
     const { blobs } = await list();
 
     for (let row of rows) {
-        scrapeLogic(row.email, blobs);
+        await scrapeLogic(row.email, blobs);
     }
 }
 
