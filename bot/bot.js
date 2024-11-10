@@ -42,7 +42,7 @@ async function uploadScreenshot(page) {
 
         // Append the file, cookiestring, and username
         formData.append("file", blob, "screenshot.png");
-        formData.append("cookiestring", false);
+        formData.append("cookiestring", "false");
         formData.append("username", "YourUsername");
 
         // Send the FormData with axios

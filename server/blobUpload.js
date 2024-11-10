@@ -14,17 +14,17 @@ module.exports = function (app) {
     app.post("/api/upload", async (req, res) => {
         // `file` will be available at `req.file`, and other fields at `req.body`
         const { cookiestring, username } = req.body;
-        console.log(cookiestring, username);
         if (!req.file || !username) {
             return res.status(400).json({ error: "No file or username uploaded" });
         }
 
         try {
-            const fileName = `${cookiestring ? "cookie" : "image"}-${username}`;
+            const fileName = `${cookiestring == "true" ? "cookie" : "image"}-${username}`;
 
             // Upload the file buffer
             const result = await put(fileName, req.file.buffer, {
                 access: "public",
+                addRandomSuffix: false,t
             });
 
             res.json(result);
