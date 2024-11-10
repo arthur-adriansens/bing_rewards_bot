@@ -19,7 +19,7 @@ module.exports = function (app) {
         }
 
         try {
-            const fileName = `${cookiestring == "true" ? "cookie" : "image"}-${username}`;
+            const fileName = `${cookiestring == "true" ? "cookie" : "image"}-${username}.png`;
 
             // Upload the file buffer
             const result = await put(fileName, req.file.buffer, {
