@@ -3,8 +3,7 @@
 // SETUP
 const puppeteer = require("puppeteer-extra");
 const { sql } = require("@vercel/postgres");
-const prompt = require("prompt-sync")();
-const fs = require("fs").promises;
+const { list } = require("@vercel/blob");
 const axios = require("axios");
 require("dotenv").config();
 
@@ -12,27 +11,18 @@ const StealthPlugin = require("puppeteer-extra-plugin-stealth");
 puppeteer.use(StealthPlugin());
 
 // LOGIN
-async function login(page) {
-    // Set login coockies (if excists)
-    try {
-        const cookiesString = process.env.TEST_COOKIES || (await fs.readFile("./bot/cookies.json"));
-        const cookies = JSON.parse(cookiesString);
-
-        await page.setCookie(...cookies);
-    } catch (error) {
-        console.log("No cookies saved yet. Login required!");
-        page.goto("https://rewards.bing.com", { waitUntil: "networkidle0", timeout: 0 });
-
-        prompt("Please login manually. Press enter (in this console) when you're logged in.");
-
-        const cookies = await page.cookies("https://rewards.bing.com");
-        await fs.writeFile("./bot/cookies.json", JSON.stringify(cookies));
-
-        console.clear();
+async function login(page, blobs, email) {
+    let url;
+    for (let blob of blobs) {
+        if (blob.pathname == `cookie-${email}.json`) {
+            url = blob.downloadUrl;
+            break;
+        }
     }
 
-    console.log("Ready to start earning!");
-    return;
+    const cookiesPrevious = await axios.get(url).catch((error) => console.log(error));
+    await page.setCookie(...cookiesPrevious.data);
+    await page.goto("https://rewards.bing.com", { waitUntil: "networkidle0", timeout: 0 });
 }
 
 async function uploadScreenshot(page, email) {
@@ -60,7 +50,7 @@ async function uploadScreenshot(page, email) {
 }
 
 // MAIN
-async function scrapeLogic(email) {
+async function scrapeLogic(email, blobs) {
     const browser = await puppeteer.launch({
         args: ["--disable-setuid-sandbox", "--no-sandbox"],
         executablePath: process.env.NODE_ENV === "production" ? process.env.PUPPETEER_EXECUTABLE_PATH : puppeteer.executablePath(),
@@ -76,7 +66,7 @@ async function scrapeLogic(email) {
         await page.setGeolocation({ latitude: 51, longitude: 3 });
 
         // Login
-        await login(page);
+        await login(page, blobs, email);
 
         await page.goto("https://rewards.bing.com", { waitUntil: "networkidle0" });
         await page.waitForSelector("#daily-sets mee-card-group:first-of-type .c-card-content");
@@ -119,14 +109,17 @@ async function scrapeLogic(email) {
 
         await new Promise((resolve) => setTimeout(resolve, 2000));
 
-        // for (let word of words.slice(1)) {
-        //     await new Promise((resolve) => setTimeout(resolve, 3500));
-        //     await page.goto(page.url().replace(/(q=)[^&]*/, `$1${word}`), { waitUntil: "networkidle0" });
-        //     console.log(word);
-        // }
+        for (let word of words.slice(1)) {
+            await new Promise((resolve) => setTimeout(resolve, 3500));
+            await page.goto(page.url().replace(/(q=)[^&]*/, `$1${word}`), { waitUntil: "networkidle0" });
+            console.log(word);
+        }
 
+        await page.goto("https://rewards.bing.com", { waitUntil: "networkidle0" });
         await uploadScreenshot(page, email);
-        //UPDATE botaccounts SET last_collected=NOW(), points='2', streak='1' WHERE email='arthur.test2@outlook.com';
+
+        const points = await page.$$eval("#rewardsBanner mee-rewards-counter-animation span", (points) => points.map((x) => x.innerHTML));
+        await sql`UPDATE botaccounts SET last_collected=NOW(), points=${points[0]}, streak=${points[2]} WHERE email=${email}`;
     } catch (e) {
         console.error("Error while running bot:", e);
     } finally {
@@ -137,9 +130,10 @@ async function scrapeLogic(email) {
 
 async function main() {
     const { rows } = await sql`SELECT * FROM botaccounts;`;
+    const { blobs } = await list();
 
     for (let row of rows) {
-        scrapeLogic(row.email);
+        scrapeLogic(row.email, blobs);
     }
 }
 

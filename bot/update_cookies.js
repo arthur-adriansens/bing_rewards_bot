@@ -50,7 +50,7 @@ async function login(page, email) {
 
     const { rows } = await sql`SELECT password FROM botaccounts WHERE email=${email}`;
 
-    page.goto("https://rewards.bing.com", { waitUntil: "networkidle0", timeout: 0 });
+    await page.goto("https://rewards.bing.com", { waitUntil: "networkidle0", timeout: 0 });
     prompt(`Please login user ${email} with password ${rows[0].password} Press enter (in this console) when you're logged in.`);
 
     const cookies = await page.cookies("https://rewards.bing.com", "https://bing.com");
