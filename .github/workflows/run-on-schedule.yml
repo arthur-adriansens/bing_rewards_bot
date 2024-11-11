@@ -3,7 +3,7 @@
 name: Run Node.js script on a schedule
 
 on:
-    push:
+    # push:
     schedule:
         - cron: "0 7-8 * * *"
 

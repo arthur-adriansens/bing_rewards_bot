@@ -62,7 +62,7 @@ async function scrapeLogic(email, blobs) {
     const browser = await puppeteer.launch({
         args: ["--disable-setuid-sandbox", "--no-sandbox"],
         executablePath: process.env.NODE_ENV === "production" ? process.env.PUPPETEER_EXECUTABLE_PATH : puppeteer.executablePath(),
-        headless: true,
+        headless: "new",
         // headless: false,
     });
 
