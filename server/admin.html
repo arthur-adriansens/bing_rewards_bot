@@ -477,7 +477,7 @@
                             return;
                         }
 
-                        element.innerHTML = user[Object.keys(user)[i]] || ".";
+                        element.innerHTML = user[Object.keys(user)[i]] ?? ".";
                     });
 
                     const parent = document.querySelector(`tbody:has(#${template.id})`);
