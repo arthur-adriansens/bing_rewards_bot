@@ -166,6 +166,10 @@ hbs.registerHelper("increment", (value) => {
 });
 
 hbs.registerHelper("formatDate", (value) => {
+    // const date = new Date(value);
+    // const formattedDate = date.toLocaleString("en-GB", { timeZone: "Europe/Brussels" });
+    // return formattedDate;
+    // return value;
     return new Date(value).toString();
 });
 

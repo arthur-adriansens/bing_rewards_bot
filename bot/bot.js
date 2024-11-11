@@ -10,6 +10,13 @@ require("dotenv").config();
 const StealthPlugin = require("puppeteer-extra-plugin-stealth");
 puppeteer.use(StealthPlugin());
 
+function cleanCookies(cookies) {
+    return cookies.map((cookie) => {
+        const { partitionKey, sourceScheme, sourcePort, ...validCookieFields } = cookie;
+        return validCookieFields;
+    });
+}
+
 // LOGIN
 async function login(page, blobs, email) {
     let url;
@@ -21,7 +28,8 @@ async function login(page, blobs, email) {
     }
 
     const cookiesPrevious = await axios.get(url).catch((error) => console.log(error));
-    await page.setCookie(...cookiesPrevious.data);
+    const cleaned = cleanCookies(cookiesPrevious.data);
+    await page.setCookie(...cleaned);
     await page.goto("https://rewards.bing.com", { waitUntil: "networkidle0", timeout: 0 });
 }
 
@@ -59,7 +67,7 @@ async function scrapeLogic(email, blobs) {
     });
 
     try {
-        console.log("Browser started.");
+        console.log(`Browser started for ${email}.`);
 
         const page = await browser.newPage();
         await page.setViewport({ width: 1600, height: 1024 });
@@ -87,7 +95,7 @@ async function scrapeLogic(email, blobs) {
                 await page.bringToFront();
                 console.log("clicked");
             } else {
-                console.log("skipped");
+                // console.log("skipped");
             }
         }
 
