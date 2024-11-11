@@ -1,6 +1,5 @@
 <!-- @format -->
 
-<!DOCTYPE html>
 <html lang="en" data-lt-installed="true">
     <head>
         <meta charset="utf-8" />
@@ -10,6 +9,8 @@
         <link href="./public/tailwind.css" rel="stylesheet" />
         <link href="./public/style.css" rel="stylesheet" />
         <title>bot dashboard</title>
+
+        {{! prettier-ignore }}
         <script>
             const userPreference = localStorage.getItem("theme");
             document.documentElement.classList.toggle("dark", userPreference ? userPreference == "dark" : window.matchMedia("(prefers-color-scheme: dark)").matches);
@@ -121,70 +122,114 @@
                                 </button>
                             </header>
                             <main class="grid flex-1 gap-4 overflow-auto p-4 grid-rows-2 grid-cols-1 md:grid-cols-2 xl:grid-cols-3 pattern">
-                                <div class="grid w-full h-full items-start gap-6">
-                                    <fieldset class="h-full grid gap-6 rounded-lg grid-cols-2 border p-4 bg-background">
-                                        <legend class="-ml-1 px-1 text-sm font-medium">Account 1</legend>
-                                        <div class="grow grid gap-6 overflow-x-hidden">
-                                            <div class="flex flex-col gap-3 min-w-0">
-                                                <label class="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">Email</label>
-                                                <div
-                                                    class="border-input bg-background ring-offset-background focus-visible:ring-ring aria-[invalid]:border-destructive data-[placeholder]:[&amp;>span]:text-muted-foreground flex h-10 w-full items-center justify-between rounded-md border px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 [&amp;>span]:line-clamp-1 relative"
-                                                >
-                                                    <span class="overflow-x-auto whitespace-nowrap no-scrollbar-fade w-full">arthur.test2@outlook.com</span>
-                                                </div>
-                                                <label class="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">Password</label>
-                                                <div
-                                                    data-pass="test"
-                                                    class="border-input bg-background ring-offset-background focus-visible:ring-ring aria-[invalid]:border-destructive data-[placeholder]:[&amp;>span]:text-muted-foreground flex h-10 w-full items-center justify-between rounded-md border px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 [&amp;>span]:line-clamp-1 relative"
-                                                >
-                                                    <span class="overflow-x-auto whitespace-nowrap no-scrollbar-fade w-full">****</span>
-                                                    <div id="toggle-icon">
-                                                        <svg viewBox="0 0 24 24" class="h-4 w-4 opacity-50 cursor-pointer">
-                                                            <path d="m15 18-.722-3.25" />
-                                                            <path d="M2 8a10.645 10.645 0 0 0 20 0" />
-                                                            <path d="m20 15-1.726-2.05" />
-                                                            <path d="m4 15 1.726-2.05" />
-                                                            <path d="m9 18 .722-3.25" />
-                                                        </svg>
-                                                        <svg viewBox="0 0 24 24" class="h-4 w-4 opacity-50 hidden cursor-pointer">
-                                                            <path d="M2.062 12.348a1 1 0 0 1 0-.696 10.75 10.75 0 0 1 19.876 0 1 1 0 0 1 0 .696 10.75 10.75 0 0 1-19.876 0" />
-                                                            <circle cx="12" cy="12" r="3" />
-                                                        </svg>
+                                {{#each botAccount}}
+                                    <div class="grid w-full h-full items-start gap-6">
+                                        <fieldset class="h-full grid gap-6 rounded-lg grid-cols-2 border p-4 bg-background">
+                                            <legend class="-ml-1 px-1 text-sm font-medium">Account {{increment @index}}</legend>
+                                            <div class="grow grid gap-6 overflow-x-hidden">
+                                                <div class="flex flex-col gap-3 min-w-0">
+                                                    <label
+                                                        class="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                                                    >Email</label>
+                                                    <div
+                                                        class="border-input bg-background ring-offset-background focus-visible:ring-ring aria-[invalid]:border-destructive data-[placeholder]:[&amp;>span]:text-muted-foreground flex h-10 w-full items-center justify-between rounded-md border px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 [&amp;>span]:line-clamp-1 relative"
+                                                    >
+                                                        <span class="overflow-x-auto whitespace-nowrap no-scrollbar-fade w-full">{{email}}</span>
                                                     </div>
-                                                </div>
-                                                <label class="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">Last collected</label>
-                                                <div
-                                                    class="border-input bg-background ring-offset-background focus-visible:ring-ring aria-[invalid]:border-destructive data-[placeholder]:[&amp;>span]:text-muted-foreground flex h-10 w-full items-center justify-between rounded-md border px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 relative"
-                                                >
-                                                    <span class="overflow-x-auto whitespace-nowrap no-scrollbar-fade w-full"> Tue Nov 05 2024 19:38:07 GMT+0100 (Central European Standard Time) </span>
-                                                </div>
-                                                <div class="grid grid-cols-2 gap-4" style="grid-template-rows: 1fr;">
-                                                    <div class="flex flex-col gap-3">
-                                                        <label class="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70" for="top-p">Points</label>
+
+                                                    {{#if password}}
+                                                        <label
+                                                            class="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                                                        >Password</label>
                                                         <div
-                                                            class="border-input bg-background ring-offset-background placeholder:text-muted-foreground focus-visible:ring-ring flex h-10 w-full rounded-md border px-3 py-2 text-sm file:border-0 file:bg-transparent file:text-sm file:font-medium focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                                                            data-pass={{password}}
+                                                            class="border-input bg-background ring-offset-background focus-visible:ring-ring aria-[invalid]:border-destructive data-[placeholder]:[&amp;>span]:text-muted-foreground flex h-10 w-full items-center justify-between rounded-md border px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 [&amp;>span]:line-clamp-1 relative"
                                                         >
-                                                            <span class="overflow-x-auto whitespace-nowrap no-scrollbar-fade w-full">70.000</span>
+                                                            <span class="overflow-x-auto whitespace-nowrap no-scrollbar-fade w-full">****</span>
+                                                            <div id="toggle-icon">
+                                                                <svg viewBox="0 0 24 24" class="h-4 w-4 opacity-50 cursor-pointer">
+                                                                    <path d="m15 18-.722-3.25" />
+                                                                    <path d="M2 8a10.645 10.645 0 0 0 20 0" />
+                                                                    <path d="m20 15-1.726-2.05" />
+                                                                    <path d="m4 15 1.726-2.05" />
+                                                                    <path d="m9 18 .722-3.25" />
+                                                                </svg>
+                                                                <svg viewBox="0 0 24 24" class="h-4 w-4 opacity-50 hidden cursor-pointer">
+                                                                    <path
+                                                                        d="M2.062 12.348a1 1 0 0 1 0-.696 10.75 10.75 0 0 1 19.876 0 1 1 0 0 1 0 .696 10.75 10.75 0 0 1-19.876 0"
+                                                                    />
+                                                                    <circle cx="12" cy="12" r="3" />
+                                                                </svg>
+                                                            </div>
                                                         </div>
-                                                    </div>
-                                                    <div class="flex flex-col gap-3">
-                                                        <label class="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70" for="top-p">Streak</label>
+                                                    {{/if}}
+
+                                                    {{#if last_collected}}
+                                                        <label
+                                                            class="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                                                        >Last collected</label>
                                                         <div
-                                                            class="border-input bg-background ring-offset-background placeholder:text-muted-foreground focus-visible:ring-ring flex h-10 w-full rounded-md border px-3 py-2 text-sm file:border-0 file:bg-transparent file:text-sm file:font-medium focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                                                            class="border-input bg-background ring-offset-background focus-visible:ring-ring aria-[invalid]:border-destructive data-[placeholder]:[&amp;>span]:text-muted-foreground flex h-10 w-full items-center justify-between rounded-md border px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 relative"
                                                         >
-                                                            <span class="overflow-x-auto whitespace-nowrap no-scrollbar-fade w-full">100</span>
+                                                            <span
+                                                                id="last_collected"
+                                                                class="overflow-x-auto whitespace-nowrap no-scrollbar-fade w-full"
+                                                            >{{formatDate last_collected}}</span>
                                                         </div>
-                                                    </div>
+                                                    {{/if}}
+
+                                                    {{#if points}}
+                                                        <div class="grid grid-cols-2 gap-4" style="grid-template-rows: 1fr;">
+                                                            <div class="flex flex-col gap-3">
+                                                                <label
+                                                                    class="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                                                                    for="top-p"
+                                                                >Points</label>
+                                                                <div
+                                                                    class="border-input bg-background ring-offset-background placeholder:text-muted-foreground focus-visible:ring-ring flex h-10 w-full rounded-md border px-3 py-2 text-sm file:border-0 file:bg-transparent file:text-sm file:font-medium focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                                                                >
+                                                                    <span
+                                                                        class="overflow-x-auto whitespace-nowrap no-scrollbar-fade w-full"
+                                                                    >{{points}}</span>
+                                                                </div>
+                                                            </div>
+
+                                                            <div class="flex flex-col gap-3">
+                                                                <label
+                                                                    class="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                                                                    for="top-p"
+                                                                >Streak</label>
+                                                                <div
+                                                                    class="border-input bg-background ring-offset-background placeholder:text-muted-foreground focus-visible:ring-ring flex h-10 w-full rounded-md border px-3 py-2 text-sm file:border-0 file:bg-transparent file:text-sm file:font-medium focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                                                                >
+                                                                    <span
+                                                                        class="overflow-x-auto whitespace-nowrap no-scrollbar-fade w-full"
+                                                                    >{{streak}}</span>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    {{/if}}
                                                 </div>
                                             </div>
-                                        </div>
-                                        <div class="grid gap-3">
-                                            <label class="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70" for="temperature">Screenshot</label>
-                                            <img class="h-full w-full rounded-md border px-3 py-2" src="./public/test.png" />
-                                        </div>
-                                    </fieldset>
-                                </div>
-                                <fieldset class="svg-hover h-full w-full flex gap-6 rounded-lg grid-cols-2 border p-4 bg-background items-center justify-center cursor-pointer">
+                                            <div class="grid gap-3">
+                                                <label
+                                                    class="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                                                    for="temperature"
+                                                >Screenshot</label>
+
+                                                {{#if imageUrl}}
+                                                    <img class="h-full w-full rounded-md border px-3 py-2" src="{{imageUrl}}" />
+                                                {{else}}
+                                                    <img class="h-full w-full rounded-md border px-3 py-2" src="./public/test.png" />
+                                                {{/if}}
+                                            </div>
+                                        </fieldset>
+                                    </div>
+                                {{/each}}
+
+                                <fieldset
+                                    class="svg-hover h-full w-full flex gap-6 rounded-lg grid-cols-2 border p-4 bg-background items-center justify-center cursor-pointer"
+                                >
                                     <legend class="-ml-1 px-1 text-sm font-medium">Add account</legend>
                                     <svg viewBox="0 0 24 24" class="opacity-50">
                                         <circle cx="12" cy="12" r="10" />
@@ -199,19 +244,20 @@
             </div>
         </div>
 
+        {{! prettier-ignore }}
         <script>
-            const toggle_icon = document.querySelector("#toggle-icon");
-            const toggle_parent = toggle_icon.parentElement;
-            let visible = false;
+            const toggle_icons = document.querySelectorAll("#toggle-icon");
+            for (let toggle_icon of toggle_icons) {
+                toggle_icon.onclick = () => {
+                    [...toggle_icon.children].forEach((element) => {
+                        element.classList.toggle("hidden");
+                    });
 
-            toggle_icon.onclick = () => {
-                [...toggle_icon.children].forEach((element) => {
-                    element.classList.toggle("hidden");
-                });
-
-                visible = !visible;
-                toggle_parent.querySelector("span").innerHTML = visible ? toggle_parent.dataset?.pass : "****";
-            };
+                    toggle_icon.parentElement.querySelector("span").innerHTML = toggle_icon.children[0].classList.contains("hidden") 
+                        ? toggle_icon.parentElement.dataset?.pass 
+                        : "****";
+                };
+            }
 
             document.querySelector("#toggleDarkMode").onclick = () => {
                 let isDarkMode = document.documentElement.classList.toggle("dark");

@@ -26,6 +26,7 @@
     "cors": "^2.8.5",
     "dotenv": "^16.4.5",
     "express": "^4.21.1",
+    "hbs": "^4.2.0",
     "multer": "^1.4.5-lts.1",
     "nocache": "^4.0.0",
     "prompt-sync": "^4.2.0",

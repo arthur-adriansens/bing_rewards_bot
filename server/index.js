@@ -10,6 +10,7 @@ if (process.env.NODE_ENV !== "production") {
     require("dotenv").config(path.resolve(process.cwd(), ".env"));
 }
 const { v4: uuidv4 } = require("uuid");
+const hbs = require("hbs");
 
 // Setup express app
 const app = express();
@@ -20,6 +21,8 @@ app.use(nocache());
 app.use(express.json());
 app.use(cookieParser());
 app.use("/public", express.static(path.join(__dirname, "../public")));
+app.set("view engine", "hbs");
+app.set("views", "./server");
 
 async function authMiddleware(req, res, next) {
     if (!req.cookies.auth || !req.cookies.id) {
@@ -143,13 +146,27 @@ app.post("/logout", async (req, res) => {
     res.status(200).redirect("/");
 });
 
+const blobReadUrl = process.env.BLOB_READ_WRITE_TOKEN.replace("vercel_blob_rw_", "").split("_")[0];
+
 app.get("/dashboard", authMiddleware, async (req, res) => {
     // CREATE TABLE botAccounts (id SERIAL PRIMARY KEY, email VARCHAR(100), password TEXT, personal BOOLEAN, last_collected TIMESTAMPTZ, points INTEGER, streak SMALLINT);
     const { rows: bot_email } = await sql`UPDATE users SET last_login = NOW() WHERE id = ${req.cookies.id} RETURNING email;`;
     if (!bot_email[0]?.email) return res.status(400).send("Database error. Please contact me for help.");
 
     const { rows: botAccount } = await sql`SELECT * FROM botaccounts WHERE email = ${bot_email[0]?.email};`;
-    return res.sendFile(path.join(__dirname, "dashboard.html"));
+
+    for (let bot of botAccount) {
+        bot.imageUrl = `https://${blobReadUrl}.public.blob.vercel-storage.com/image-${bot.email}.png`;
+    }
+    res.render("dashboard.hbs", { botAccount });
+});
+
+hbs.registerHelper("increment", (value) => {
+    return parseInt(value) + 1;
+});
+
+hbs.registerHelper("formatDate", (value) => {
+    return new Date(value).toString();
 });
 
 app.listen(port, () => {
