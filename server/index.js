@@ -71,39 +71,42 @@ app.get("/admin/bots", adminAuthMiddleware, async (req, res) => {
 });
 
 app.post("/admin/new_user", adminAuthMiddleware, async (req, res) => {
-    if (!req.body || !req.body.username || !req.body.email) {
+    if (!req.body?.username) {
         return res.status(400).send("Please fill in all fields.");
     }
 
-    // Check if email excist in bot botaccounts
-    const bot = await sql`SELECT * FROM botaccounts WHERE email = ${req.body.email};`;
-    if (bot.rowCount == 0) return res.status(400).send("Bot email doesn't excist.");
-
-    const result = await sql`INSERT INTO users (username, email) VALUES (${req.body.username}, ${req.body.email});`;
+    const result = await sql`INSERT INTO users (username) VALUES (${req.body.username});`;
     return res.status(200).send(result);
 });
 
 app.post("/admin/new_bot", adminAuthMiddleware, async (req, res) => {
-    if (!req.body || !req.body.email || req.body.personal == undefined) {
+    const { email, personal, username, password } = req.body;
+    if (!email || (personal == undefined) | !username) {
         return res.status(400).send("Please fill in all fields");
     }
 
-    const result = await sql`INSERT INTO botaccounts (email, password, personal) VALUES (${req.body.email}, ${req.body.password || "unnecessary"}, ${
-        req.body.personal
-    });`;
+    // Check if user excist
+    const user = await sql`SELECT * FROM users WHERE username = ${username};`;
+    if (user.rowCount == 0) return res.status(400).send(`User ${username} doesn't excist.`);
+
+    const result = await sql`INSERT INTO botaccounts (email, password, personal, username) VALUES (${email}, ${
+        password || "unnecessary"
+    }, ${personal},${username});`;
     return res.status(200).send(result);
 });
 
 app.post("/admin/remove_user", adminAuthMiddleware, async (req, res) => {
-    if (!req.body?.username) return res.status(400).send("Please fill in all fields");
-    const result = await sql`DELETE FROM ${req.body.bot ? "botaccounts" : "users"} WHERE ${req.body.bot ? "email" : "username"}='${
-        req.body.username
-    }';`;
+    const { id, bot } = req.body;
+    if (!id) return res.status(400).send("Please fill in all fields");
+
+    const query = bot ? sql`DELETE FROM botaccounts WHERE id = ${id}` : sql`DELETE FROM users WHERE id = ${id}`;
+
+    const result = await query;
     return res.status(200).send(result);
 });
 
 app.post("/login", async (req, res) => {
-    // CREATE TABLE users (id SERIAL PRIMARY KEY, username VARCHAR(50) NOT NULL, email VARCHAR(100), last_login TIMESTAMPTZ, auth_token TEXT);
+    // CREATE TABLE users (id SERIAL PRIMARY KEY, email VARCHAR(100), last_login TIMESTAMPTZ, auth_token TEXT);
     if (!req.body || !req.body.name || !req.body.password) {
         return res.status(400).send("Please fill in all fields");
     }
@@ -149,11 +152,11 @@ app.post("/logout", async (req, res) => {
 const blobReadUrl = process.env.BLOB_READ_WRITE_TOKEN.replace("vercel_blob_rw_", "").split("_")[0];
 
 app.get("/dashboard", authMiddleware, async (req, res) => {
-    // CREATE TABLE botAccounts (id SERIAL PRIMARY KEY, email VARCHAR(100), password TEXT, personal BOOLEAN, last_collected TIMESTAMPTZ, points INTEGER, streak SMALLINT);
-    const { rows: bot_email } = await sql`UPDATE users SET last_login = NOW() WHERE id = ${req.cookies.id} RETURNING email;`;
-    if (!bot_email[0]?.email) return res.status(400).send("Database error. Please contact me for help.");
+    // CREATE TABLE botAccounts (id SERIAL PRIMARY KEY, email VARCHAR(100), password TEXT, username VARCHAR(50), personal BOOLEAN, last_collected TIMESTAMPTZ, points INTEGER, streak SMALLINT);
+    const { rows: user } = await sql`UPDATE users SET last_login = NOW() WHERE id = ${req.cookies.id} RETURNING username;`;
+    if (!user[0]?.username) return res.status(400).send("Database error. Please contact me for help.");
 
-    const { rows: botAccount } = await sql`SELECT * FROM botaccounts WHERE email = ${bot_email[0]?.email};`;
+    const { rows: botAccount } = await sql`SELECT * FROM botaccounts WHERE username = ${user[0]?.username};`;
 
     for (let bot of botAccount) {
         bot.imageUrl = `https://${blobReadUrl}.public.blob.vercel-storage.com/image-${bot.email}.png`;

@@ -24,14 +24,14 @@
             function remove(element, bot) {
                 if (!element) return;
 
-                const username = element.parentElement.parentElement.children[1].innerHTML;
+                const id = element.parentElement.parentElement.children[0].innerHTML;
                 fetch("/admin/remove_user", {
                     method: "POST",
                     headers: {
                         "Content-Type": "application/json",
                     },
                     body: JSON.stringify({
-                        username: username,
+                        id: `${id}`,
                         bot: bot,
                     }),
                 })
@@ -160,11 +160,6 @@
                                                         <th
                                                             class="h-12 px-4 text-left align-middle font-medium text-muted-foreground [&amp;:has([role=checkbox])]:pr-0"
                                                         >
-                                                            Email
-                                                        </th>
-                                                        <th
-                                                            class="h-12 px-4 text-left align-middle font-medium text-muted-foreground [&amp;:has([role=checkbox])]:pr-0"
-                                                        >
                                                             Last login
                                                         </th>
                                                         <th
@@ -186,7 +181,6 @@
                                                     >
                                                         <td class="p-4 align-middle [&amp;:has([role=checkbox])]:pr-0 font-medium">0</td>
                                                         <td class="p-4 align-middle [&amp;:has([role=checkbox])]:pr-0">Jeff</td>
-                                                        <td class="p-4 align-middle [&amp;:has([role=checkbox])]:pr-0">jeff@gmail.com</td>
                                                         <td class="p-4 align-middle [&amp;:has([role=checkbox])]:pr-0">Tue Nov 05 2024</td>
                                                         <!--new Date().toDateString()-->
                                                         <td id="copy_btn" class="p-4 align-middle [&amp;:has([role=checkbox])]:pr-0">
@@ -237,14 +231,7 @@
                                                                 placeholder="Jeff"
                                                             />
                                                         </td>
-                                                        <td class="p-4 align-middle [&amp;:has([role=checkbox])]:pr-0">
-                                                            <input
-                                                                class="border-input bg-background ring-offset-background placeholder:text-muted-foreground focus-visible:ring-ring flex h-10 w-full rounded-md border px-3 py-2 text-sm file:border-0 file:bg-transparent file:text-sm file:font-medium focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
-                                                                id="new_email"
-                                                                type="email"
-                                                                placeholder="example@gmail.com"
-                                                            />
-                                                        </td>
+
                                                         <td class="p-4 align-middle [&amp;:has([role=checkbox])]:pr-0">.</td>
                                                         <td class="p-4 align-middle [&amp;:has([role=checkbox])]:pr-0">.</td>
                                                         <td class="p-4 align-middle [&amp;:has([role=checkbox])]:pr-0">
@@ -316,17 +303,22 @@
                                                         <th
                                                             class="h-12 px-4 text-left align-middle font-medium text-muted-foreground [&amp;:has([role=checkbox])]:pr-0"
                                                         >
-                                                            last_collected
+                                                            Last collected
                                                         </th>
                                                         <th
                                                             class="h-12 px-4 text-left align-middle font-medium text-muted-foreground [&amp;:has([role=checkbox])]:pr-0"
                                                         >
-                                                            points
+                                                            Points
                                                         </th>
                                                         <th
                                                             class="h-12 px-4 text-left align-middle font-medium text-muted-foreground [&amp;:has([role=checkbox])]:pr-0"
                                                         >
-                                                            streak
+                                                            Streak
+                                                        </th>
+                                                        <th
+                                                            class="h-12 px-4 text-left align-middle font-medium text-muted-foreground [&amp;:has([role=checkbox])]:pr-0"
+                                                        >
+                                                            User
                                                         </th>
                                                         <th
                                                             class="border-l h-12 px-0 text-center align-middle font-medium text-muted-foreground [&amp;:has([role=checkbox])]:pr-0"
@@ -362,6 +354,7 @@
                                                         <td class="p-4 align-middle [&amp;:has([role=checkbox])]:pr-0">Tue Nov 05 2024</td>
                                                         <td class="p-4 align-middle [&amp;:has([role=checkbox])]:pr-0">2000</td>
                                                         <td class="p-4 align-middle [&amp;:has([role=checkbox])]:pr-0">2</td>
+                                                        <td class="p-4 align-middle [&amp;:has([role=checkbox])]:pr-0">Jeff</td>
                                                         <td
                                                             id="template_skip"
                                                             class="p-4 align-middle border-l flex justify-center [&amp;:has([role=checkbox])]:pr-0"
@@ -389,15 +382,15 @@
                                                         <td class="p-4 align-middle [&amp;:has([role=checkbox])]:pr-0">
                                                             <input
                                                                 class="border-input bg-background ring-offset-background placeholder:text-muted-foreground focus-visible:ring-ring flex h-10 w-full rounded-md border px-3 py-2 text-sm file:border-0 file:bg-transparent file:text-sm file:font-medium focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
-                                                                id="new_2_email"
-                                                                type="text"
+                                                                id="email"
+                                                                type="email"
                                                                 placeholder="jeff@gmail.com"
                                                             />
                                                         </td>
                                                         <td class="p-4 align-middle [&amp;:has([role=checkbox])]:pr-0">
                                                             <input
                                                                 class="border-input bg-background ring-offset-background placeholder:text-muted-foreground focus-visible:ring-ring flex h-10 w-full rounded-md border px-3 py-2 text-sm file:border-0 file:bg-transparent file:text-sm file:font-medium focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
-                                                                id="new_2_password"
+                                                                id="password"
                                                                 type="text"
                                                                 placeholder="abc123"
                                                             />
@@ -406,12 +399,20 @@
                                                             <input
                                                                 type="checkbox"
                                                                 class="peer h-4 w-4 shrink-0 rounded-sm border border-primary ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 data-[state=checked]:bg-primary data-[state=checked]:text-primary-foreground"
-                                                                id="new_2_personal"
+                                                                id="personal"
                                                             />
                                                         </td>
                                                         <td class="p-4 align-middle [&amp;:has([role=checkbox])]:pr-0">.</td>
                                                         <td class="p-4 align-middle [&amp;:has([role=checkbox])]:pr-0">.</td>
                                                         <td class="p-4 align-middle [&amp;:has([role=checkbox])]:pr-0">.</td>
+                                                        <td class="p-4 align-middle [&amp;:has([role=checkbox])]:pr-0">
+                                                            <input
+                                                                class="border-input bg-background ring-offset-background placeholder:text-muted-foreground focus-visible:ring-ring flex h-10 w-full rounded-md border px-3 py-2 text-sm file:border-0 file:bg-transparent file:text-sm file:font-medium focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                                                                id="username"
+                                                                type="text"
+                                                                placeholder="Jeff"
+                                                            />
+                                                        </td>
                                                         <td class="p-4 align-middle [&amp;:has([role=checkbox])]:pr-0">
                                                             <button
                                                                 tabindex="0"
@@ -430,7 +431,7 @@
                                                 </tbody>
                                                 <tfoot class="border-t bg-muted/50 font-medium [&amp;>tr]:last:border-b-0">
                                                     <tr class="border-b transition-colors data-[state=selected]:bg-muted">
-                                                        <td class="p-4 align-middle [&amp;:has([role=checkbox])]:pr-0" colspan="8">
+                                                        <td class="p-4 align-middle [&amp;:has([role=checkbox])]:pr-0" colspan="9">
                                                             <button
                                                                 tabindex="0"
                                                                 id="add_bot"
@@ -485,29 +486,33 @@
                 }
             };
 
-            fetch("/admin/users", {
-                method: "GET",
-            }).then(async (response) => {
-                const data = await response.json();
-                data.forEach((x, i) => {
-                    if (x.last_login) {
-                        x.last_login = new Date(x.last_login).toDateString();
-                    }
+            function getInfo() {
+                fetch("/admin/users", {
+                    method: "GET",
+                }).then(async (response) => {
+                    const data = await response.json();
+                    data.forEach((x, i) => {
+                        if (x.last_login) {
+                            x.last_login = new Date(x.last_login).toDateString();
+                        }
+                    });
+                    render(document.querySelector("#template"), data);
                 });
-                render(document.querySelector("#template"), data);
-            });
 
-            fetch("/admin/bots", {
-                method: "GET",
-            }).then(async (response) => {
-                const data = await response.json();
-                data.forEach((x, i) => {
-                    if (x.last_collected) {
-                        x.last_collected = new Date(x.last_collected).toDateString();
-                    }
+                fetch("/admin/bots", {
+                    method: "GET",
+                }).then(async (response) => {
+                    const data = await response.json();
+                    data.forEach((x, i) => {
+                        if (x.last_collected) {
+                            x.last_collected = new Date(x.last_collected).toDateString();
+                        }
+                    });
+                    render(document.querySelector("#template_2"), data);
                 });
-                render(document.querySelector("#template_2"), data);
-            });
+            }
+
+            getInfo();
 
             // add user functionality
             const toggle = (e) => {
@@ -519,8 +524,8 @@
             document.querySelector("button#add_user").onclick = document.querySelector("button#add_bot").onclick = toggle;
 
             document.querySelector("button#create_user").onclick = (e) => {
-                const elements = document.querySelectorAll("#new_name, #new_email");
-                if (!elements[0].value || !elements[1].value) return;
+                const element = document.querySelector("#new_name");
+                if (!element.value) return;
                 toggle(e);
 
                 fetch("/admin/new_user", {
@@ -529,8 +534,7 @@
                         "Content-Type": "application/json",
                     },
                     body: JSON.stringify({
-                        username: elements[0].value,
-                        email: elements[1].value,
+                        username: element.value,
                     }),
                 })
                     .then((response) => response.json())
@@ -538,8 +542,8 @@
             };
 
             document.querySelector("button#create_bot").onclick = (e) => {
-                const elements = document.querySelectorAll("#new_2_email, #new_2_password, #new_2_personal");
-                if (!elements[0].value || !elements[2]) return;
+                const elements = document.querySelectorAll("#email, #password, #personal, #username");
+                if (!elements[0].value || !elements[2] || !elements[3].value) return;
                 toggle(e);
 
                 fetch("/admin/new_bot", {
@@ -551,6 +555,7 @@
                         email: elements[0].value,
                         password: elements[1].value,
                         personal: elements[2].checked,
+                        username: elements[3].value,
                     }),
                 })
                     .then((response) => response.json())
