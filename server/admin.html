@@ -489,9 +489,11 @@
                 method: "GET",
             }).then(async (response) => {
                 const data = await response.json();
-                if (data[0].last_login) {
-                    data[0].last_login = new Date(data[0].last_login).toDateString();
-                }
+                data.forEach((x, i) => {
+                    if (x.last_login) {
+                        x.last_login = new Date(x.last_login).toDateString();
+                    }
+                });
                 render(document.querySelector("#template"), data);
             });
 
@@ -499,6 +501,11 @@
                 method: "GET",
             }).then(async (response) => {
                 const data = await response.json();
+                data.forEach((x, i) => {
+                    if (x.last_collected) {
+                        x.last_collected = new Date(x.last_collected).toDateString();
+                    }
+                });
                 render(document.querySelector("#template_2"), data);
             });
 
