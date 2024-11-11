@@ -118,7 +118,7 @@ async function scrapeLogic(email, blobs) {
         await new Promise((resolve) => setTimeout(resolve, 2000));
 
         for (let word of words.slice(1)) {
-            await new Promise((resolve) => setTimeout(resolve, 3500));
+            await new Promise((resolve) => setTimeout(resolve, Math.floor(Math.random() * (4000 - 3500 + 1) + 3500)));
             await page.goto(page.url().replace(/(q=)[^&]*/, `$1${word}`), { waitUntil: "networkidle0" });
             console.log(word);
         }

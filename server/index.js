@@ -15,11 +15,11 @@ const hbs = require("hbs");
 // Setup express app
 const app = express();
 const port = process.env.PORT || 3000;
-require(path.join(__dirname, "blobUpload.js"))(app);
 app.use(cors());
 app.use(nocache());
 app.use(express.json());
 app.use(cookieParser());
+require(path.join(__dirname, "blobUpload.js"))(app);
 app.use("/public", express.static(path.join(__dirname, "../public")));
 app.set("view engine", "hbs");
 app.set("views", "./server");
@@ -166,11 +166,18 @@ hbs.registerHelper("increment", (value) => {
 });
 
 hbs.registerHelper("formatDate", (value) => {
-    // const date = new Date(value);
-    // const formattedDate = date.toLocaleString("en-GB", { timeZone: "Europe/Brussels" });
-    // return formattedDate;
-    // return value;
-    return new Date(value).toString();
+    const options = {
+        timeZone: "Europe/Brussels",
+        weekday: "short",
+        month: "short",
+        day: "2-digit",
+        year: "numeric",
+        hour: "2-digit",
+        minute: "2-digit",
+        second: "2-digit",
+        timeZoneName: "longOffset",
+    };
+    return new Date(value).toLocaleString("en-GB", options);
 });
 
 app.listen(port, () => {
