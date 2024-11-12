@@ -22,7 +22,7 @@ app.use(cookieParser());
 require(path.join(__dirname, "blobUpload.js"))(app);
 app.use("/public", express.static(path.join(__dirname, "../public")));
 app.set("view engine", "hbs");
-app.set("views", path.join(process.cwd(), "server"));
+app.set("views", process.env.NODE_ENV === "production" ? "/var/task/server" : "./server");
 
 async function authMiddleware(req, res, next) {
     if (!req.cookies.auth || !req.cookies.id) {
