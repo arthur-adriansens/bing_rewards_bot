@@ -21,6 +21,7 @@ app.use(express.json());
 app.use(cookieParser());
 require(path.join(__dirname, "blobUpload.js"))(app);
 app.use("/public", express.static(path.join(__dirname, "../public")));
+app.set("views", __dirname + "/views");
 app.set("view engine", "hbs");
 // app.set("views", process.env.NODE_ENV === "production" ? "/var/task/server" : "./server");
 
