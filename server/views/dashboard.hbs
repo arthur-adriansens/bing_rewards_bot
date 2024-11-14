@@ -218,7 +218,7 @@
                                                 >Screenshot</label>
 
                                                 {{#if imageUrl}}
-                                                    <img class="h-full w-full rounded-md border px-3 py-2" src="{{imageUrl}}" />
+                                                    <img id="dynamicImage" class="h-full w-full rounded-md border px-3 py-2" src="{{imageUrl}}" />
                                                 {{else}}
                                                     <img class="h-full w-full rounded-md border px-3 py-2" src="./public/test.png" />
                                                 {{/if}}
@@ -279,6 +279,10 @@
                     }
                 });
             };
+
+            document.querySelectorAll("#dynamicImage").forEach((image) => {
+                image.src = image.src + "?" + new Date().getTime();
+            });
         </script>
     </body>
 </html>
