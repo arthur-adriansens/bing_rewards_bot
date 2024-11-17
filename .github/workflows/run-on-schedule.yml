@@ -3,11 +3,10 @@
 name: Run Node.js script on a schedule
 
 on:
-    push:
+    # push:
     schedule:
         - cron: "0 7 * * *"
 
-# A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
     build:
         runs-on: ubuntu-latest
@@ -16,7 +15,8 @@ jobs:
             - uses: actions/setup-node@v4
               with:
                   node-version: "20.x"
-            - run: npm install
+                  cache: "npm" # Automatically handles npm cache
+            - run: npm ci
             - name: Run script
               run: npm run bot
               env:

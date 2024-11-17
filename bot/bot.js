@@ -99,18 +99,6 @@ async function scrapeLogic(email, blobs) {
             }
         }
 
-        await page.goto("https://rewards.bing.com", { waitUntil: "networkidle0" });
-        await uploadScreenshot(page, email);
-
-        const points = await page.$$eval("#rewardsBanner mee-rewards-counter-animation span", (points) =>
-            points.map((x) => x.innerHTML.replace(",", ""))
-        );
-        console.log(points);
-        console.log(`query: UPDATE botaccounts SET last_collected=NOW(), points=${points[0]}, streak=${points[2]} WHERE email=${email}`);
-        await sql`UPDATE botaccounts SET last_collected=NOW(), points=${points[0]}, streak=${points[2]} WHERE email=${email}`;
-
-        return;
-
         // Search rewards
         // TODO: not all are being collected: better way with pot less cookies=click on cards and search from there and keep track if points are changing (no need to wait 3,5s) with css var --rw-gp-balance-from and --rw-gp-balance-to in html tag or aria-label="Microsoft Rewards 867" of #rh_rwm
         await (await page.$("#dailypointColumnCalltoAction")).click();
@@ -139,9 +127,9 @@ async function scrapeLogic(email, blobs) {
         await page.goto("https://rewards.bing.com", { waitUntil: "networkidle0" });
         await uploadScreenshot(page, email);
 
-        // const points = await page.$$eval("#rewardsBanner mee-rewards-counter-animation span", (points) => points.map((x) => x.innerHTML));
-        console.log(points);
-        console.log(`query: UPDATE botaccounts SET last_collected=NOW(), points=${points[0]}, streak=${points[2]} WHERE email=${email}`);
+        const points = await page.$$eval("#rewardsBanner mee-rewards-counter-animation span", (points) =>
+            points.map((x) => x.innerHTML.replace(",", ""))
+        );
         await sql`UPDATE botaccounts SET last_collected=NOW(), points=${points[0]}, streak=${points[2]} WHERE email=${email}`;
     } catch (e) {
         console.error("Error while running bot:", e);
