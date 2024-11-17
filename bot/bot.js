@@ -102,7 +102,9 @@ async function scrapeLogic(email, blobs) {
         await page.goto("https://rewards.bing.com", { waitUntil: "networkidle0" });
         await uploadScreenshot(page, email);
 
-        const points = await page.$$eval("#rewardsBanner mee-rewards-counter-animation span", (points) => points.map((x) => x.innerHTML));
+        const points = await page.$$eval("#rewardsBanner mee-rewards-counter-animation span", (points) =>
+            points.map((x) => x.innerHTML.replace(",", ""))
+        );
         console.log(points);
         console.log(`query: UPDATE botaccounts SET last_collected=NOW(), points=${points[0]}, streak=${points[2]} WHERE email=${email}`);
         await sql`UPDATE botaccounts SET last_collected=NOW(), points=${points[0]}, streak=${points[2]} WHERE email=${email}`;
