@@ -67,7 +67,7 @@ async function scrapeLogic(email, blobs) {
     });
 
     try {
-        console.log(`Browser started for ${email}.`);
+        console.log(`Browser started for ${email} at ${new Date().toLocaleTimeString()}.`);
 
         const page = await browser.newPage();
         await page.setViewport({ width: 1600, height: 1024 });
@@ -77,7 +77,7 @@ async function scrapeLogic(email, blobs) {
         await login(page, blobs, email);
 
         await page.goto("https://rewards.bing.com", { waitUntil: "networkidle0" });
-        await page.waitForSelector("#daily-sets mee-card-group:first-of-type .c-card-content");
+        await page.waitForSelector("#daily-sets mee-card-group:first-of-type .c-card-content", { timeout: 10000 });
 
         // Remove popup (even if invisible)
         await page.$$eval("mee-rewards-pop-up", (els) => els?.forEach((el) => el.remove())).catch((e) => console.log(e));
@@ -128,6 +128,8 @@ async function scrapeLogic(email, blobs) {
         await uploadScreenshot(page, email);
 
         const points = await page.$$eval("#rewardsBanner mee-rewards-counter-animation span", (points) => points.map((x) => x.innerHTML));
+        console.log(points);
+        console.log(`query: UPDATE botaccounts SET last_collected=NOW(), points=${points[0]}, streak=${points[2]} WHERE email=${email}`);
         await sql`UPDATE botaccounts SET last_collected=NOW(), points=${points[0]}, streak=${points[2]} WHERE email=${email}`;
     } catch (e) {
         console.error("Error while running bot:", e);
