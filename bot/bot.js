@@ -94,18 +94,14 @@ async function scrapeLogic(email, blobs) {
                 await reward_blocks[card_index].click();
                 await page.bringToFront();
                 console.log("clicked");
-            } else {
-                // console.log("skipped");
             }
         }
 
         // Search rewards
-        // TODO: not all are being collected: better way with pot less cookies=click on cards and search from there and keep track if points are changing (no need to wait 3,5s) with css var --rw-gp-balance-from and --rw-gp-balance-to in html tag or aria-label="Microsoft Rewards 867" of #rh_rwm
-        await (await page.$("#dailypointColumnCalltoAction")).click();
+        const pointsbreakdown = await page.$eval("#meeGradientBanner > div > div > div > p", (x) => x.innerHTML).catch(() => undefined);
+        const maxSearches = pointsbreakdown == "Level 2" ? 30 : 10;
 
-        await page.waitForSelector("p[ng-bind-html='$ctrl.pointProgressText']", { visible: true });
-        const pointsbreakdown = await page.$eval("p[ng-bind-html='$ctrl.pointProgressText']", (x) => x.innerHTML);
-        const maxSearches = pointsbreakdown?.includes("/ 30") ? 10 : 30; // 3 points per search
+        // TODO: not all are being collected: better way with pot less cookies=click on cards and search from there and keep track if points are changing (no need to wait 3,5s) with css var --rw-gp-balance-from and --rw-gp-balance-to in html tag or aria-label="Microsoft Rewards 867" of #rh_rwm
         const search_href = await page.$eval("#userPointsBreakdown a[mee-hyperlink]", (x) => x.getAttribute("href"));
         await page.goto(search_href, { waitUntil: "networkidle0" });
 
@@ -124,6 +120,7 @@ async function scrapeLogic(email, blobs) {
             console.log(word);
         }
 
+        // Upload results to db
         await page.goto("https://rewards.bing.com", { waitUntil: "networkidle0" });
         await uploadScreenshot(page, email);
 
