@@ -77,7 +77,7 @@ async function scrapeLogic(email, blobs) {
         await login(page, blobs, email);
 
         await page.goto("https://rewards.bing.com", { waitUntil: "networkidle0" });
-        await page.waitForSelector("#daily-sets mee-card-group:first-of-type .c-card-content", { timeout: 10000 });
+        await page.waitForSelector("#daily-sets mee-card-group:first-of-type .c-card-content", { timeout: 10_000 });
 
         // Remove popup (even if invisible)
         await page.$$eval("mee-rewards-pop-up", (els) => els?.forEach((el) => el.remove())).catch((e) => console.log(e));
@@ -98,6 +98,16 @@ async function scrapeLogic(email, blobs) {
                 // console.log("skipped");
             }
         }
+
+        await page.goto("https://rewards.bing.com", { waitUntil: "networkidle0" });
+        await uploadScreenshot(page, email);
+
+        const points = await page.$$eval("#rewardsBanner mee-rewards-counter-animation span", (points) => points.map((x) => x.innerHTML));
+        console.log(points);
+        console.log(`query: UPDATE botaccounts SET last_collected=NOW(), points=${points[0]}, streak=${points[2]} WHERE email=${email}`);
+        await sql`UPDATE botaccounts SET last_collected=NOW(), points=${points[0]}, streak=${points[2]} WHERE email=${email}`;
+
+        return;
 
         // Search rewards
         // TODO: not all are being collected: better way with pot less cookies=click on cards and search from there and keep track if points are changing (no need to wait 3,5s) with css var --rw-gp-balance-from and --rw-gp-balance-to in html tag or aria-label="Microsoft Rewards 867" of #rh_rwm
@@ -127,7 +137,7 @@ async function scrapeLogic(email, blobs) {
         await page.goto("https://rewards.bing.com", { waitUntil: "networkidle0" });
         await uploadScreenshot(page, email);
 
-        const points = await page.$$eval("#rewardsBanner mee-rewards-counter-animation span", (points) => points.map((x) => x.innerHTML));
+        // const points = await page.$$eval("#rewardsBanner mee-rewards-counter-animation span", (points) => points.map((x) => x.innerHTML));
         console.log(points);
         console.log(`query: UPDATE botaccounts SET last_collected=NOW(), points=${points[0]}, streak=${points[2]} WHERE email=${email}`);
         await sql`UPDATE botaccounts SET last_collected=NOW(), points=${points[0]}, streak=${points[2]} WHERE email=${email}`;
