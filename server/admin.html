@@ -25,14 +25,16 @@
                 if (!element) return;
 
                 const id = element.parentElement.parentElement.children[0].innerHTML;
+                const email = element.parentElement.parentElement.children[1].innerHTML;
                 fetch("/admin/remove_user", {
                     method: "POST",
                     headers: {
                         "Content-Type": "application/json",
                     },
                     body: JSON.stringify({
-                        id: `${id}`,
+                        id: id,
                         bot: bot,
+                        email: email,
                     }),
                 })
                     .then((response) => response.json())

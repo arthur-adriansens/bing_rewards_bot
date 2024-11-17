@@ -1,6 +1,7 @@
 /** @format */
 
 const { sql } = require("@vercel/postgres");
+const { del } = require("@vercel/blob");
 const express = require("express");
 const cors = require("cors");
 const nocache = require("nocache");
@@ -15,6 +16,7 @@ const hbs = require("hbs");
 // Setup express app
 const app = express();
 const port = process.env.PORT || 3000;
+const blobReadUrl = process.env.BLOB_READ_WRITE_TOKEN.replace("vercel_blob_rw_", "").split("_")[0];
 app.use(cors());
 app.use(nocache());
 app.use(express.json());
@@ -96,12 +98,17 @@ app.post("/admin/new_bot", adminAuthMiddleware, async (req, res) => {
 });
 
 app.post("/admin/remove_user", adminAuthMiddleware, async (req, res) => {
-    const { id, bot } = req.body;
+    const { id, bot, email } = req.body;
     if (!id) return res.status(400).send("Please fill in all fields");
 
-    const query = bot ? sql`DELETE FROM botaccounts WHERE id = ${id}` : sql`DELETE FROM users WHERE id = ${id}`;
+    if (bot && email) {
+        await del(`https://${blobReadUrl}.public.blob.vercel-storage.com/image-${email}.png`);
+        await del(`https://${blobReadUrl}.public.blob.vercel-storage.com/cookie-${email}.json`);
+    }
 
+    const query = bot ? sql`DELETE FROM botaccounts WHERE id = ${id}` : sql`DELETE FROM users WHERE id = ${id}`;
     const result = await query;
+
     return res.status(200).send(result);
 });
 
@@ -148,9 +155,6 @@ app.post("/logout", async (req, res) => {
     res.clearCookie("id");
     res.status(200).redirect("/");
 });
-
-const blobReadUrl = process.env.BLOB_READ_WRITE_TOKEN.replace("vercel_blob_rw_", "").split("_")[0];
-
 app.get("/dashboard", authMiddleware, async (req, res) => {
     // CREATE TABLE botAccounts (id SERIAL PRIMARY KEY, email VARCHAR(100), password TEXT, username VARCHAR(50), personal BOOLEAN, last_collected TIMESTAMPTZ, points INTEGER, streak SMALLINT);
     const { rows: user } = await sql`UPDATE users SET last_login = NOW() WHERE id = ${req.cookies.id} RETURNING username;`;
