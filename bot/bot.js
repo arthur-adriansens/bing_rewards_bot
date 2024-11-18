@@ -101,6 +101,7 @@ async function scrapeLogic(email, blobs) {
         const pointsbreakdown = await page.$eval("#meeGradientBanner > div > div > div > p", (x) => x.innerHTML).catch(() => undefined);
         const maxSearches = pointsbreakdown == "Level 2" ? 30 : 10;
 
+        await (await page.$("#dailypointColumnCalltoAction")).click();
         await page.waitForSelector("p[ng-bind-html='$ctrl.pointProgressText']", { visible: true });
         const search_href = await page.$eval("#userPointsBreakdown a[mee-hyperlink]", (x) => x.getAttribute("href"));
         await page.goto(search_href, { waitUntil: "networkidle0" });
