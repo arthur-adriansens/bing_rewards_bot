@@ -83,6 +83,10 @@ async function scrapeLogic(email, blobs) {
         await page.$$eval("mee-rewards-pop-up", (els) => els?.forEach((el) => el.remove())).catch((e) => console.log(e));
 
         // Click daily and more rewards
+        const pointsbreakdown = await page.$eval("#meeGradientBanner > div > div > div > p", (x) => x.innerHTML).catch(() => undefined);
+        const maxSearches = pointsbreakdown == "Level 2" ? 30 : 10;
+        console.log(pointsbreakdown, maxSearches);
+
         const reward_blocks = await page.$$("#daily-sets mee-card-group:first-of-type .c-card-content, #more-activities .c-card-content");
         const cards_hrefs = await page.$$eval(
             "#daily-sets mee-card-group:first-of-type .c-card-content a, #more-activities .c-card-content a",
@@ -98,9 +102,6 @@ async function scrapeLogic(email, blobs) {
         }
 
         // Search rewards
-        const pointsbreakdown = await page.$eval("#meeGradientBanner > div > div > div > p", (x) => x.innerHTML).catch(() => undefined);
-        const maxSearches = pointsbreakdown == "Level 2" ? 30 : 10;
-
         await (await page.$("#dailypointColumnCalltoAction")).click();
         await page.waitForSelector("p[ng-bind-html='$ctrl.pointProgressText']", { visible: true });
         const search_href = await page.$eval("#userPointsBreakdown a[mee-hyperlink]", (x) => x.getAttribute("href"));
