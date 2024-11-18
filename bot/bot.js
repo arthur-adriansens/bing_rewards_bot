@@ -101,7 +101,7 @@ async function scrapeLogic(email, blobs) {
         const pointsbreakdown = await page.$eval("#meeGradientBanner > div > div > div > p", (x) => x.innerHTML).catch(() => undefined);
         const maxSearches = pointsbreakdown == "Level 2" ? 30 : 10;
 
-        // TODO: not all are being collected: better way with pot less cookies=click on cards and search from there and keep track if points are changing (no need to wait 3,5s) with css var --rw-gp-balance-from and --rw-gp-balance-to in html tag or aria-label="Microsoft Rewards 867" of #rh_rwm
+        await page.waitForSelector("p[ng-bind-html='$ctrl.pointProgressText']", { visible: true });
         const search_href = await page.$eval("#userPointsBreakdown a[mee-hyperlink]", (x) => x.getAttribute("href"));
         await page.goto(search_href, { waitUntil: "networkidle0" });
 
@@ -115,7 +115,7 @@ async function scrapeLogic(email, blobs) {
         await new Promise((resolve) => setTimeout(resolve, 2000));
 
         for (let word of words.slice(1)) {
-            await new Promise((resolve) => setTimeout(resolve, Math.floor(Math.random() * (4000 - 3500 + 1) + 3500)));
+            await new Promise((resolve) => setTimeout(resolve, Math.floor(Math.random() * (7000 - 6000 + 1) + 6000)));
             await page.goto(page.url().replace(/(q=)[^&]*/, `$1${word}`), { waitUntil: "networkidle0" });
             console.log(word);
         }
