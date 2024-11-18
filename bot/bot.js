@@ -84,8 +84,7 @@ async function scrapeLogic(email, blobs) {
 
         // Click daily and more rewards
         const pointsbreakdown = await page.$eval("#meeGradientBanner > div > div > div > p", (x) => x.innerHTML).catch(() => undefined);
-        const maxSearches = pointsbreakdown == "Level 2" ? 30 : 10;
-        console.log(pointsbreakdown, maxSearches);
+        const maxSearches = pointsbreakdown.includes("Level 2") ? 30 : 10;
 
         const reward_blocks = await page.$$("#daily-sets mee-card-group:first-of-type .c-card-content, #more-activities .c-card-content");
         const cards_hrefs = await page.$$eval(
@@ -93,13 +92,15 @@ async function scrapeLogic(email, blobs) {
             (cards) => cards.map((x) => x.getAttribute("href"))
         );
 
+        let counter = 0;
         for (let card_index in reward_blocks) {
             if (!cards_hrefs[card_index] || cards_hrefs[card_index].includes("bing.com/search")) {
                 await reward_blocks[card_index].click();
                 await page.bringToFront();
-                console.log("clicked");
+                counter++;
             }
         }
+        console.log(`Clicked ${counter} times.`);
 
         // Search rewards
         await (await page.$("#dailypointColumnCalltoAction")).click();
@@ -113,9 +114,9 @@ async function scrapeLogic(email, blobs) {
         await page.waitForSelector("input#sb_form_q", { visible: true, timeout: 10000 });
         await page.type("input#sb_form_q", words[0]);
         await page.keyboard.press("Enter");
+        console.log(words[0]);
 
         await new Promise((resolve) => setTimeout(resolve, 2000));
-
         for (let word of words.slice(1)) {
             await new Promise((resolve) => setTimeout(resolve, Math.floor(Math.random() * (7000 - 6000 + 1) + 6000)));
             await page.goto(page.url().replace(/(q=)[^&]*/, `$1${word}`), { waitUntil: "networkidle0" });
