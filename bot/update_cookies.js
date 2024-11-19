@@ -3,7 +3,7 @@
 // SETUP
 const puppeteer = require("puppeteer-extra");
 const { sql } = require("@vercel/postgres");
-const { list } = require('@vercel/blob');
+const { list } = require("@vercel/blob");
 const prompt = require("prompt-sync")();
 const axios = require("axios");
 require("dotenv").config();
@@ -45,8 +45,12 @@ async function login(page, email) {
         }
     }
 
-    const cookiesPrevious = await axios.get(url).catch(error=>console.log(error));
-    await page.setCookie(...cookiesPrevious.data);
+    let setcookies = true;
+    const cookiesPrevious = await axios.get(url).catch((error) => {
+        console.log("cookies don't excist yet");
+        setcookies = false;
+    });
+    if (setcookies) await page.setCookie(...cookiesPrevious.data);
 
     const { rows } = await sql`SELECT password FROM botaccounts WHERE email=${email}`;
 
@@ -55,7 +59,7 @@ async function login(page, email) {
 
     const cookies = await page.cookies("https://rewards.bing.com", "https://bing.com");
     await uploadJson(cookies, email);
-    console.log(`Updated ${email} succesfully!`)
+    console.log(`Updated ${email} succesfully!`);
     // console.clear();
     return;
 }
@@ -88,6 +92,7 @@ async function scrapeLogic(email) {
 
 async function update() {
     const { rows } = await sql`SELECT * FROM botaccounts;`;
+    // await scrapeLogic(rows[1].email);
 
     for (let row of rows) {
         await scrapeLogic(row.email);

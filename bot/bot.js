@@ -30,7 +30,7 @@ async function login(page, blobs, email) {
     const cookiesPrevious = await axios.get(url).catch((error) => console.log(error));
     const cleaned = cleanCookies(cookiesPrevious.data);
     await page.setCookie(...cleaned);
-    await page.goto("https://rewards.bing.com", { waitUntil: "networkidle0", timeout: 0 });
+    // await page.goto("https://rewards.bing.com", { waitUntil: "networkidle0", timeout: 0 });
 }
 
 async function uploadScreenshot(page, email) {
@@ -76,7 +76,7 @@ async function scrapeLogic(email, blobs) {
         // Login
         await login(page, blobs, email);
 
-        await page.goto("https://rewards.bing.com", { waitUntil: "networkidle0" });
+        await page.goto("https://rewards.bing.com");
         await page.waitForSelector("#daily-sets mee-card-group:first-of-type .c-card-content", { timeout: 10_000 });
 
         // Remove popup (even if invisible)
