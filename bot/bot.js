@@ -140,9 +140,10 @@ async function scrapeLogic(email, blobs) {
 }
 
 async function main() {
-    const { rows } = await sql`SELECT * FROM botaccounts;`;
+    const { rows } = await sql`SELECT * FROM botaccounts WHERE server=${process.env.SERVER};`;
     const { blobs } = await list();
 
+    console.log(`Server number: ${process.env.SERVER}`);
     for (let row of rows) {
         await scrapeLogic(row.email, blobs);
     }

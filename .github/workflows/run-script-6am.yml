@@ -1,11 +1,10 @@
 # @format
 
-name: Run Node.js script on a schedule
+name: Run Node.js script at 6 AM
 
 on:
-    # push:
     schedule:
-        - cron: "0 7 * * *"
+        - cron: "0 6 * * *" # Runs at 6 AM UTC
 
 jobs:
     build:
@@ -29,3 +28,4 @@ jobs:
                   POSTGRES_URL_NON_POOLING: ${{ secrets.POSTGRES_URL_NON_POOLING }}
                   POSTGRES_URL: ${{ secrets.POSTGRES_URL }}
                   BLOB_READ_WRITE_TOKEN: ${{ secrets.BLOB_READ_WRITE_TOKEN }}
+                  SERVER: 1
