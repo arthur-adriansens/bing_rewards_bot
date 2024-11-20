@@ -82,8 +82,8 @@ app.post("/admin/new_user", adminAuthMiddleware, async (req, res) => {
 });
 
 app.post("/admin/new_bot", adminAuthMiddleware, async (req, res) => {
-    const { email, personal, username, password } = req.body;
-    if (!email || (personal == undefined) | !username) {
+    const { email, personal, username, password, server } = req.body;
+    if (!email || personal == undefined || !username || !server) {
         return res.status(400).send("Please fill in all fields");
     }
 
@@ -91,9 +91,9 @@ app.post("/admin/new_bot", adminAuthMiddleware, async (req, res) => {
     const user = await sql`SELECT * FROM users WHERE username = ${username};`;
     if (user.rowCount == 0) return res.status(400).send(`User ${username} doesn't excist.`);
 
-    const result = await sql`INSERT INTO botaccounts (email, password, personal, username) VALUES (${email}, ${
+    const result = await sql`INSERT INTO botaccounts (email, password, personal, username, server) VALUES (${email}, ${
         password || "unnecessary"
-    }, ${personal},${username});`;
+    }, ${personal}, ${username}, ${server});`;
     return res.status(200).send(result);
 });
 
@@ -109,6 +109,14 @@ app.post("/admin/remove_user", adminAuthMiddleware, async (req, res) => {
     const query = bot ? sql`DELETE FROM botaccounts WHERE id = ${id}` : sql`DELETE FROM users WHERE id = ${id}`;
     const result = await query;
 
+    return res.status(200).send(result);
+});
+
+app.post("/admin/change_server_number", adminAuthMiddleware, async (req, res) => {
+    const { id, value } = req.body;
+    if (!id || !value) return res.status(400).send("Please fill in all fields");
+
+    const result = await sql`UPDATE botaccounts SET server = ${value} WHERE id = ${id};`;
     return res.status(200).send(result);
 });
 

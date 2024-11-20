@@ -40,6 +40,25 @@
                     .then((response) => response.json())
                     .then((data) => console.log(data));
             }
+
+            function update_server_number(element) {
+                if (!element) return;
+
+                const id = element.parentElement.parentElement.children[0].innerHTML;
+
+                fetch("/admin/change_server_number", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify({
+                        id: id,
+                        value: element.value,
+                    }),
+                })
+                    .then((response) => response.json())
+                    .then((data) => console.log(data));
+            }
         </script>
     </head>
 
@@ -254,7 +273,7 @@
                                                 </tbody>
                                                 <tfoot class="border-t bg-muted/50 font-medium [&amp;>tr]:last:border-b-0">
                                                     <tr class="border-b transition-colors data-[state=selected]:bg-muted">
-                                                        <td class="p-4 align-middle [&amp;:has([role=checkbox])]:pr-0" colspan="7">
+                                                        <td class="p-4 align-middle [&amp;:has([role=checkbox])]:pr-0">
                                                             <button
                                                                 tabindex="0"
                                                                 id="add_user"
@@ -323,6 +342,11 @@
                                                             User
                                                         </th>
                                                         <th
+                                                            class="h-12 px-4 text-left align-middle font-medium text-muted-foreground [&amp;:has([role=checkbox])]:pr-0"
+                                                        >
+                                                            Server
+                                                        </th>
+                                                        <th
                                                             class="border-l h-12 px-0 text-center align-middle font-medium text-muted-foreground [&amp;:has([role=checkbox])]:pr-0"
                                                         >
                                                             Remove
@@ -357,6 +381,15 @@
                                                         <td class="p-4 align-middle [&amp;:has([role=checkbox])]:pr-0">2000</td>
                                                         <td class="p-4 align-middle [&amp;:has([role=checkbox])]:pr-0">2</td>
                                                         <td class="p-4 align-middle [&amp;:has([role=checkbox])]:pr-0">Jeff</td>
+                                                        <td id="server_number" class="p-4 align-middle [&amp;:has([role=checkbox])]:pr-0">
+                                                            <input
+                                                                class="border-input bg-background ring-offset-background placeholder:text-muted-foreground focus-visible:ring-ring flex h-10 w-full rounded-md border px-3 py-2 text-sm file:border-0 file:bg-transparent file:text-sm file:font-medium focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                                                                id="server_nr"
+                                                                type="text"
+                                                                onchange="update_server_number(this)"
+                                                                placeholder="1"
+                                                            />
+                                                        </td>
                                                         <td
                                                             id="template_skip"
                                                             class="p-4 align-middle border-l flex justify-center [&amp;:has([role=checkbox])]:pr-0"
@@ -416,6 +449,14 @@
                                                             />
                                                         </td>
                                                         <td class="p-4 align-middle [&amp;:has([role=checkbox])]:pr-0">
+                                                            <input
+                                                                class="border-input bg-background ring-offset-background placeholder:text-muted-foreground focus-visible:ring-ring flex h-10 w-full rounded-md border px-3 py-2 text-sm file:border-0 file:bg-transparent file:text-sm file:font-medium focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                                                                id="server"
+                                                                type="number"
+                                                                placeholder="null"
+                                                            />
+                                                        </td>
+                                                        <td class="p-4 align-middle [&amp;:has([role=checkbox])]:pr-0">
                                                             <button
                                                                 tabindex="0"
                                                                 id="create_bot"
@@ -433,7 +474,7 @@
                                                 </tbody>
                                                 <tfoot class="border-t bg-muted/50 font-medium [&amp;>tr]:last:border-b-0">
                                                     <tr class="border-b transition-colors data-[state=selected]:bg-muted">
-                                                        <td class="p-4 align-middle [&amp;:has([role=checkbox])]:pr-0" colspan="9">
+                                                        <td class="p-4 align-middle [&amp;:has([role=checkbox])]:pr-0" colspan="10">
                                                             <button
                                                                 tabindex="0"
                                                                 id="add_bot"
@@ -477,6 +518,11 @@
                     new_element.querySelectorAll("td:not(#template_skip)").forEach((element, i) => {
                         if (element.id == "copy_btn") {
                             element.querySelector("button").dataset.token = user[Object.keys(user)[i]];
+                            return;
+                        }
+
+                        if (element.id == "server_number") {
+                            element.querySelector("input").placeholder = user[Object.keys(user)[i]];
                             return;
                         }
 
@@ -544,8 +590,8 @@
             };
 
             document.querySelector("button#create_bot").onclick = (e) => {
-                const elements = document.querySelectorAll("#email, #password, #personal, #username");
-                if (!elements[0].value || !elements[2] || !elements[3].value) return;
+                const elements = document.querySelectorAll("#email, #password, #personal, #username, #server");
+                if (!elements[0].value || !elements[2] || !elements[3].value || !elements[4].value) return;
                 toggle(e);
 
                 fetch("/admin/new_bot", {
@@ -558,6 +604,7 @@
                         password: elements[1].value,
                         personal: elements[2].checked,
                         username: elements[3].value,
+                        server: elements[4].value,
                     }),
                 })
                     .then((response) => response.json())
