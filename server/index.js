@@ -12,6 +12,8 @@ if (process.env.NODE_ENV !== "production") {
 }
 const { v4: uuidv4 } = require("uuid");
 const hbs = require("hbs");
+const { inject } = require("@vercel/analytics");
+inject();
 
 // Setup express app
 const app = express();

@@ -18,6 +18,7 @@
   "author": "Arthur",
   "license": "ISC",
   "dependencies": {
+    "@vercel/analytics": "^1.4.1",
     "@vercel/blob": "^0.25.1",
     "@vercel/postgres": "^0.10.0",
     "axios": "^1.7.7",
