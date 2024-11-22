@@ -1,0 +1,32 @@
+# @format
+
+name: Run Node.js script at 8 AM
+
+on:
+    push:
+    schedule:
+        - cron: "0 8 * * *" # Runs at 7 AM UTC
+
+jobs:
+    build:
+        runs-on: ubuntu-latest
+        steps:
+            - uses: actions/checkout@v4
+            - uses: actions/setup-node@v4
+              with:
+                  node-version: "20.x"
+                  cache: "npm" # Automatically handles npm cache
+            - run: npm ci
+            - name: Run script
+              run: npm run bot
+              env:
+                  POSTGRES_DATABASE: ${{ secrets.POSTGRES_DATABASE }}
+                  verceldb: ${{ secrets.verceldb }}
+                  POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
+                  POSTGRES_USER: ${{ secrets.POSTGRES_USER }}
+                  POSTGRES_PRISMA_URL: ${{ secrets.POSTGRES_PRISMA_URL }}
+                  POSTGRES_URL_NO_SSL: ${{ secrets.POSTGRES_URL_NO_SSL }}
+                  POSTGRES_URL_NON_POOLING: ${{ secrets.POSTGRES_URL_NON_POOLING }}
+                  POSTGRES_URL: ${{ secrets.POSTGRES_URL }}
+                  BLOB_READ_WRITE_TOKEN: ${{ secrets.BLOB_READ_WRITE_TOKEN }}
+                  SERVER: 3
