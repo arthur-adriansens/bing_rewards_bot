@@ -8,8 +8,9 @@
         <link rel="icon" href="./public/logo.svg" type="image/svg" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
 
+        <link rel="stylesheet" href="./public/output.css" />
         <link rel="stylesheet" href="./public/style.css" />
-        <link rel="stylesheet" href="./public/tailwind.css" />
+        <!-- <link rel="stylesheet" href="./public/output.css" /> -->
         <title>bot login</title>
         <script>
             const userPreference = localStorage.getItem("theme");
@@ -128,8 +129,7 @@
             const error_element = document.querySelector("#error-msg");
             const loading = document.querySelector("#loading").classList;
 
-            document.querySelector
-            ("#login").onclick = async () => {
+            document.querySelector("#login").onclick = async () => {
                 loading.remove("opacity-0");
                 const name = document.querySelector("#name").value;
                 const password = document.querySelector("#password").value;

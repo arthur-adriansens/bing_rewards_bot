@@ -4,11 +4,14 @@
     <head>
         <meta charset="UTF-8" />
         <title>Bing Chilling - admin</title>
-        <link rel="stylesheet" href="./public/tailwind.css" />
+        <link rel="stylesheet" href="./public/output.css" />
         <link rel="stylesheet" href="./public/style.css" />
         <script>
             const userPreference = localStorage.getItem("theme");
-            document.documentElement.classList.toggle("dark", userPreference ? userPreference == "dark" : window.matchMedia("(prefers-color-scheme: dark)").matches);
+            document.documentElement.classList.toggle(
+                "dark",
+                userPreference ? userPreference == "dark" : window.matchMedia("(prefers-color-scheme: dark)").matches
+            );
 
             window.matchMedia("(prefers-color-scheme: dark)").addEventListener("change", (e) => {
                 document.documentElement.classList.toggle("dark", e.matches);
@@ -35,9 +38,14 @@
         </script>
 
         <style>
-            body{ display: flex; align-items: center; flex-direction: column; height:
-            100%; justify-content: center; margin: 0;}
+            body {
+                display: flex;
+                align-items: center;
+                flex-direction: column;
+                height: 100%;
+                justify-content: center;
+                margin: 0;
+            }
         </style>
     </body>
 </html>
-    
