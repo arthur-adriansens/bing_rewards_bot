@@ -11,5 +11,6 @@
             "src": "/(.*)",
             "dest": "server/index.js"
         }
-    ]
+    ],
+    "buildCommand": "npm run build-css && npm install"
 }
