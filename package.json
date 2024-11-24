@@ -5,9 +5,9 @@
   "main": "bot/bot.js",
   "scripts": {
     "test": "node bot/test.js",
-    "build": "npm install",
+    "build": "npm install && npm run build-css",
     "bot": "node bot/bot.js",
-    "start": "node server/index.js",
+    "start": "npm run build-css && node server/index.js",
     "build-css": "npx tailwindcss -i ./server/template.css -o ./public/output.css --minify"
   },
   "keywords": [

@@ -17,7 +17,7 @@ inject();
 
 // Setup express app
 const app = express();
-const port = process.env.PORT || 3000;
+const port = process.env.PORT || 3002;
 const blobReadUrl = process.env.BLOB_READ_WRITE_TOKEN.replace("vercel_blob_rw_", "").split("_")[0];
 app.use(cors());
 app.use(nocache());
