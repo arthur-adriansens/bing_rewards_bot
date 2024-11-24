@@ -3,4 +3,3 @@ node_modules
 tempCodeRunnerFile.js
 .vercel
 server/cookies.json
-public/output.css
