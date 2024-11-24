@@ -1,6 +1,5 @@
 <!-- @format -->
 
-<!DOCTYPE html>
 <html lang="en" data-lt-installed="true">
     <head>
         <meta charset="utf-8" />
@@ -9,6 +8,8 @@
         <link href="./public/output.css" rel="stylesheet" />
         <link href="./public/style.css" rel="stylesheet" />
         <title>bot dashboard</title>
+
+        {{! prettier-ignore }}
         <script>
             const userPreference = localStorage.getItem("theme");
             document.documentElement.classList.toggle(
@@ -161,6 +162,7 @@
                                 </button>
                             </header>
                             <main class="w-full grid flex-1 gap-4 overflow-auto p-4 pattern">
+
                                 <fieldset class="h-full w-full grid gap-6 rounded-lg border p-4 bg-background">
                                     <legend class="-ml-1 px-1 text-sm font-medium">Accounts list</legend>
                                     <div class="preview flex min-h-[350px] w-full justify-center p-10 items-center">
@@ -195,50 +197,52 @@
                                                         </th>
                                                     </tr>
                                                 </thead>
+
                                                 <tbody class="[&amp;_tr:last-child]:border-0">
-                                                    <tr
-                                                        id="template"
-                                                        class="border-b transition-colors hover:bg-muted/50 data-[state=selected]:bg-muted"
-                                                    >
-                                                        <td class="p-4 align-middle [&amp;:has([role=checkbox])]:pr-0 font-medium">0</td>
-                                                        <td class="p-4 align-middle [&amp;:has([role=checkbox])]:pr-0">Jeff</td>
-                                                        <td class="p-4 align-middle [&amp;:has([role=checkbox])]:pr-0">Tue Nov 05 2024</td>
-                                                        <!--new Date().toDateString()-->
-                                                        <td id="copy_btn" class="p-4 align-middle [&amp;:has([role=checkbox])]:pr-0">
-                                                            <button
-                                                                tabindex="0"
-                                                                onclick="navigator.clipboard.writeText(this?.dataset?.token);"
-                                                                class="ring-offset-background focus-visible:ring-ring inline-flex items-center justify-center whitespace-nowrap font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border-input bg-background hover:bg-accent hover:text-accent-foreground border h-9 rounded-md px-3 ml-auto gap-1.5 text-sm"
+                                                    {{#each users}}
+                                                        <tr class="border-b transition-colors hover:bg-muted/50 data-[state=selected]:bg-muted">
+                                                            <td class="p-4 align-middle [&amp;:has([role=checkbox])]:pr-0 font-medium">{{id}}</td>
+                                                            <td class="p-4 align-middle [&amp;:has([role=checkbox])]:pr-0">{{username}}</td>
+                                                            <td class="p-4 align-middle [&amp;:has([role=checkbox])]:pr-0">{{formatDateShort
+                                                                    last_login
+                                                                }}</td>
+                                                            <td class="p-4 align-middle [&amp;:has([role=checkbox])]:pr-0">
+                                                                <button
+                                                                    tabindex="0"
+                                                                    onclick="navigator.clipboard.writeText(this?.dataset?.token);"
+                                                                    class="ring-offset-background focus-visible:ring-ring inline-flex items-center justify-center whitespace-nowrap font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border-input bg-background hover:bg-accent hover:text-accent-foreground border h-9 rounded-md px-3 ml-auto gap-1.5 text-sm"
+                                                                    data-token="{{auth_token}}"
+                                                                >
+                                                                    <svg viewBox="0 0 24 24" class="size-3.5">
+                                                                        <rect width="8" height="4" x="8" y="2" rx="1" ry="1" />
+                                                                        <path d="M8 4H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2" />
+                                                                        <path d="M16 4h2a2 2 0 0 1 2 2v4" />
+                                                                        <path d="M21 14H11" />
+                                                                        <path d="m15 10-4 4 4 4" />
+                                                                    </svg>
+                                                                    Copy
+                                                                </button>
+                                                            </td>
+                                                            <td
+                                                                class="p-4 align-middle border-l flex justify-center [&amp;:has([role=checkbox])]:pr-0"
                                                             >
-                                                                <svg viewBox="0 0 24 24" class="size-3.5">
-                                                                    <rect width="8" height="4" x="8" y="2" rx="1" ry="1" />
-                                                                    <path d="M8 4H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2" />
-                                                                    <path d="M16 4h2a2 2 0 0 1 2 2v4" />
-                                                                    <path d="M21 14H11" />
-                                                                    <path d="m15 10-4 4 4 4" />
-                                                                </svg>
-                                                                Copy
-                                                            </button>
-                                                        </td>
-                                                        <td
-                                                            id="template_skip"
-                                                            class="p-4 align-middle border-l flex justify-center [&amp;:has([role=checkbox])]:pr-0"
-                                                        >
-                                                            <button
-                                                                tabindex="0"
-                                                                onclick="remove(this, false)"
-                                                                class="ring-offset-background focus-visible:ring-ring inline-flex items-center justify-center whitespace-nowrap font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border-input bg-background hover:bg-accent hover:text-accent-foreground border h-9 rounded-md px-3 gap-1.5 text-sm"
-                                                            >
-                                                                <svg viewBox="0 0 24 24" class="size-3.5">
-                                                                    <path d="M3 6h18" />
-                                                                    <path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6" />
-                                                                    <path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2" />
-                                                                    <line x1="10" x2="10" y1="11" y2="17" />
-                                                                    <line x1="14" x2="14" y1="11" y2="17" />
-                                                                </svg>
-                                                            </button>
-                                                        </td>
-                                                    </tr>
+                                                                <button
+                                                                    tabindex="0"
+                                                                    onclick="remove(this, false)"
+                                                                    class="ring-offset-background focus-visible:ring-ring inline-flex items-center justify-center whitespace-nowrap font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border-input bg-background hover:bg-accent hover:text-accent-foreground border h-9 rounded-md px-3 gap-1.5 text-sm"
+                                                                >
+                                                                    <svg viewBox="0 0 24 24" class="size-3.5">
+                                                                        <path d="M3 6h18" />
+                                                                        <path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6" />
+                                                                        <path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2" />
+                                                                        <line x1="10" x2="10" y1="11" y2="17" />
+                                                                        <line x1="14" x2="14" y1="11" y2="17" />
+                                                                    </svg>
+                                                                </button>
+                                                            </td>
+                                                        </tr>
+                                                    {{/each}}
+
                                                     <tr
                                                         id="new_inputs"
                                                         class="hidden border-b transition-colors data-[state=selected]:bg-muted bg-muted/50"
@@ -271,9 +275,11 @@
                                                         </td>
                                                     </tr>
                                                 </tbody>
-                                                <tfoot class="border-t bg-muted/50 font-medium [&amp;>tr]:last:border-b-0">
-                                                    <tr class="border-b transition-colors data-[state=selected]:bg-muted">
-                                                        <td class="p-4 align-middle [&amp;:has([role=checkbox])]:pr-0">
+                                                <tfoot class="border-t bg-muted/50 font-medium">
+                                                    <tr class="border-b-0 transition-colors data-[state=selected]:bg-muted">
+                                                        <td class="p-4 align-middle [&amp;:has([role=checkbox])]:pr-0">Total</td>
+                                                        <td class="p-4 align-middle [&amp;:has([role=checkbox])]:pr-0">10</td>
+                                                        <td class="p-4 align-middle [&amp;:has([role=checkbox])]:pr-0" colspan="3">
                                                             <button
                                                                 tabindex="0"
                                                                 id="add_user"
@@ -294,6 +300,7 @@
                                         </div>
                                     </div>
                                 </fieldset>
+
                                 <fieldset class="h-full w-full grid gap-6 rounded-lg border p-4 bg-background">
                                     <legend class="-ml-1 px-1 text-sm font-medium">Bots list</legend>
                                     <div class="preview flex min-h-[350px] w-full justify-center p-10 items-center">
@@ -354,61 +361,79 @@
                                                     </tr>
                                                 </thead>
                                                 <tbody class="[&amp;_tr:last-child]:border-0">
-                                                    <tr
-                                                        id="template_2"
-                                                        class="border-b transition-colors hover:bg-muted/50 data-[state=selected]:bg-muted"
-                                                    >
-                                                        <td class="p-4 align-middle [&amp;:has([role=checkbox])]:pr-0 font-medium">0</td>
-                                                        <td class="p-4 align-middle [&amp;:has([role=checkbox])]:pr-0">Jeff</td>
-                                                        <td id="copy_btn" class="p-4 align-middle [&amp;:has([role=checkbox])]:pr-0">
-                                                            <button
-                                                                tabindex="0"
-                                                                onclick="navigator.clipboard.writeText(this?.dataset?.token);"
-                                                                class="ring-offset-background focus-visible:ring-ring inline-flex items-center justify-center whitespace-nowrap font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border-input bg-background hover:bg-accent hover:text-accent-foreground border h-9 rounded-md px-3 ml-auto gap-1.5 text-sm"
+                                                    {{#each bots}}
+                                                        <tr class="border-b transition-colors hover:bg-muted/50 data-[state=selected]:bg-muted">
+                                                            <td class="p-4 align-middle [&amp;:has([role=checkbox])]:pr-0 font-medium">{{id}}</td>
+                                                            <td class="p-4 align-middle [&amp;:has([role=checkbox])]:pr-0">{{email}}</td>
+                                                            <td class="p-4 align-middle [&amp;:has([role=checkbox])]:pr-0">
+                                                                <button
+                                                                    tabindex="0"
+                                                                    onclick="navigator.clipboard.writeText(this?.dataset?.token);"
+                                                                    class="ring-offset-background focus-visible:ring-ring inline-flex items-center justify-center whitespace-nowrap font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border-input bg-background hover:bg-accent hover:text-accent-foreground border h-9 rounded-md px-3 ml-auto gap-1.5 text-sm"
+                                                                    data-token="{{password}}"
+                                                                >
+                                                                    <svg viewBox="0 0 24 24" class="size-3.5">
+                                                                        <rect width="8" height="4" x="8" y="2" rx="1" ry="1" />
+                                                                        <path d="M8 4H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2" />
+                                                                        <path d="M16 4h2a2 2 0 0 1 2 2v4" />
+                                                                        <path d="M21 14H11" />
+                                                                        <path d="m15 10-4 4 4 4" />
+                                                                    </svg>
+                                                                    Copy
+                                                                </button>
+                                                            </td>
+                                                            <td class="p-4 align-middle [&amp;:has([role=checkbox])]:pr-0">{{personal}}</td>
+                                                            <td class="p-4 align-middle [&amp;:has([role=checkbox])]:pr-0">
+                                                                {{#if last_collected}}
+                                                                    {{formatDateShort last_collected}}
+                                                                {{else}}
+                                                                    .
+                                                                {{/if}}
+                                                            </td>
+                                                            <td class="p-4 align-middle [&amp;:has([role=checkbox])]:pr-0">
+                                                                {{#if points}}
+                                                                    {{points}}
+                                                                {{else}}
+                                                                    .
+                                                                {{/if}}
+                                                            </td>
+                                                            <td class="p-4 align-middle [&amp;:has([role=checkbox])]:pr-0">
+                                                                {{#if streak}}
+                                                                    {{streak}}
+                                                                {{else}}
+                                                                    .
+                                                                {{/if}}
+                                                            </td>
+                                                            <td class="p-4 align-middle [&amp;:has([role=checkbox])]:pr-0">{{username}}</td>
+                                                            <td class="p-4 align-middle [&amp;:has([role=checkbox])]:pr-0">
+                                                                <input
+                                                                    class="border-input bg-background ring-offset-background placeholder:text-muted-foreground focus-visible:ring-ring flex h-10 w-full rounded-md border px-3 py-2 text-sm file:border-0 file:bg-transparent file:text-sm file:font-medium focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                                                                    type="text"
+                                                                    onchange="update_server_number(this)"
+                                                                    placeholder="{{server}}"
+                                                                />
+                                                            </td>
+                                                            <td
+                                                                class="p-4 align-middle border-l flex justify-center [&amp;:has([role=checkbox])]:pr-0"
+                                                                style="padding-top: calc(1rem + 2px); padding-bottom: calc(1rem + 2px)"
                                                             >
-                                                                <svg viewBox="0 0 24 24" class="size-3.5">
-                                                                    <rect width="8" height="4" x="8" y="2" rx="1" ry="1" />
-                                                                    <path d="M8 4H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2" />
-                                                                    <path d="M16 4h2a2 2 0 0 1 2 2v4" />
-                                                                    <path d="M21 14H11" />
-                                                                    <path d="m15 10-4 4 4 4" />
-                                                                </svg>
-                                                                Copy
-                                                            </button>
-                                                        </td>
-                                                        <td class="p-4 align-middle [&amp;:has([role=checkbox])]:pr-0">true</td>
-                                                        <td class="p-4 align-middle [&amp;:has([role=checkbox])]:pr-0">Tue Nov 05 2024</td>
-                                                        <td class="p-4 align-middle [&amp;:has([role=checkbox])]:pr-0">2000</td>
-                                                        <td class="p-4 align-middle [&amp;:has([role=checkbox])]:pr-0">2</td>
-                                                        <td class="p-4 align-middle [&amp;:has([role=checkbox])]:pr-0">Jeff</td>
-                                                        <td id="server_number" class="p-4 align-middle [&amp;:has([role=checkbox])]:pr-0">
-                                                            <input
-                                                                class="border-input bg-background ring-offset-background placeholder:text-muted-foreground focus-visible:ring-ring flex h-10 w-full rounded-md border px-3 py-2 text-sm file:border-0 file:bg-transparent file:text-sm file:font-medium focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
-                                                                id="server_nr"
-                                                                type="text"
-                                                                onchange="update_server_number(this)"
-                                                                placeholder="1"
-                                                            />
-                                                        </td>
-                                                        <td
-                                                            id="template_skip"
-                                                            class="p-4 align-middle border-l flex justify-center [&amp;:has([role=checkbox])]:pr-0"
-                                                        >
-                                                            <button
-                                                                tabindex="0"
-                                                                onclick="remove(this, true)"
-                                                                class="ring-offset-background focus-visible:ring-ring inline-flex items-center justify-center whitespace-nowrap font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border-input bg-background hover:bg-accent hover:text-accent-foreground border h-9 rounded-md px-3 gap-1.5 text-sm"
-                                                            >
-                                                                <svg viewBox="0 0 24 24" class="size-3.5">
-                                                                    <path d="M3 6h18" />
-                                                                    <path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6" />
-                                                                    <path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2" />
-                                                                    <line x1="10" x2="10" y1="11" y2="17" />
-                                                                    <line x1="14" x2="14" y1="11" y2="17" />
-                                                                </svg>
-                                                            </button>
-                                                        </td>
-                                                    </tr>
+                                                                <button
+                                                                    tabindex="0"
+                                                                    onclick="remove(this, true)"
+                                                                    class="ring-offset-background focus-visible:ring-ring inline-flex items-center justify-center whitespace-nowrap font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border-input bg-background hover:bg-accent hover:text-accent-foreground border h-9 rounded-md px-3 gap-1.5 text-sm"
+                                                                >
+                                                                    <svg viewBox="0 0 24 24" class="size-3.5">
+                                                                        <path d="M3 6h18" />
+                                                                        <path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6" />
+                                                                        <path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2" />
+                                                                        <line x1="10" x2="10" y1="11" y2="17" />
+                                                                        <line x1="14" x2="14" y1="11" y2="17" />
+                                                                    </svg>
+                                                                </button>
+                                                            </td>
+                                                        </tr>
+                                                    {{/each}}
+
                                                     <tr
                                                         id="new_inputs"
                                                         class="hidden border-b transition-colors data-[state=selected]:bg-muted bg-muted/50"
@@ -472,8 +497,11 @@
                                                         </td>
                                                     </tr>
                                                 </tbody>
-                                                <tfoot class="border-t bg-muted/50 font-medium [&amp;>tr]:last:border-b-0">
-                                                    <tr class="border-b transition-colors data-[state=selected]:bg-muted">
+                                                <tfoot class="border-t bg-muted/50 font-medium">
+                                                    <tr class="border-b-0 transition-colors data-[state=selected]:bg-muted">
+                                                        <td class="p-4 align-middle [&amp;:has([role=checkbox])]:pr-0">Total</td>
+                                                        <td class="p-4 align-middle [&amp;:has([role=checkbox])]:pr-0" colspan="4">10</td>
+                                                        <td class="p-4 align-middle [&amp;:has([role=checkbox])]:pr-0">1000</td>
                                                         <td class="p-4 align-middle [&amp;:has([role=checkbox])]:pr-0" colspan="10">
                                                             <button
                                                                 tabindex="0"
@@ -501,66 +529,13 @@
             </div>
         </div>
 
+        {{! prettier-ignore }}
         <script>
             // setup dark/light mode button
             document.querySelector("#toggleDarkMode").onclick = () => {
                 let isDarkMode = document.documentElement.classList.toggle("dark");
                 localStorage.setItem("theme", isDarkMode ? "dark" : "light");
             };
-
-            // get users + render
-            const render = (template, data) => {
-                template.classList.add("hidden");
-                for (let user of data) {
-                    const new_element = template.cloneNode(true);
-                    new_element.id = "";
-                    new_element.classList.remove("hidden");
-                    new_element.querySelectorAll("td:not(#template_skip)").forEach((element, i) => {
-                        if (element.id == "copy_btn") {
-                            element.querySelector("button").dataset.token = user[Object.keys(user)[i]];
-                            return;
-                        }
-
-                        if (element.id == "server_number") {
-                            element.querySelector("input").placeholder = user[Object.keys(user)[i]];
-                            return;
-                        }
-
-                        element.innerHTML = user[Object.keys(user)[i]] ?? ".";
-                    });
-
-                    const parent = document.querySelector(`tbody:has(#${template.id})`);
-                    parent.insertBefore(new_element, parent.firstChild);
-                }
-            };
-
-            function getInfo() {
-                fetch("/admin/users", {
-                    method: "GET",
-                }).then(async (response) => {
-                    const data = await response.json();
-                    data.forEach((x, i) => {
-                        if (x.last_login) {
-                            x.last_login = new Date(x.last_login).toDateString();
-                        }
-                    });
-                    render(document.querySelector("#template"), data);
-                });
-
-                fetch("/admin/bots", {
-                    method: "GET",
-                }).then(async (response) => {
-                    const data = await response.json();
-                    data.forEach((x, i) => {
-                        if (x.last_collected) {
-                            x.last_collected = new Date(x.last_collected).toDateString();
-                        }
-                    });
-                    render(document.querySelector("#template_2"), data);
-                });
-            }
-
-            getInfo();
 
             // add user functionality
             const toggle = (e) => {

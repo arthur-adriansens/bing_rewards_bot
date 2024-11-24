@@ -57,21 +57,15 @@ app.get("/", (req, res) => {
 });
 
 app.get("/admin", async (req, res) => {
-    // res.cookie("key", process.env.ADMIN_KEY, { path: "/admin", secure: true, httpOnly: true });
     if (req.cookies.key != process.env.ADMIN_KEY) {
         return res.status(403).sendFile(path.join(__dirname, "../public", "admin_error.html"));
     }
-    return res.status(200).sendFile(path.join(__dirname, "admin.html"));
-});
 
-app.get("/admin/users", adminAuthMiddleware, async (req, res) => {
-    const { rows } = await sql`SELECT * FROM users;`;
-    return res.status(200).send(rows);
-});
+    const { rows: users } = await sql`SELECT * FROM users;`;
+    const { rows: bots } = await sql`SELECT * FROM botaccounts;`;
+    console.log(bots);
 
-app.get("/admin/bots", adminAuthMiddleware, async (req, res) => {
-    const { rows } = await sql`SELECT * FROM botaccounts;`;
-    return res.status(200).send(rows);
+    return res.status(200).render("admin.hbs", { users, bots });
 });
 
 app.post("/admin/new_user", adminAuthMiddleware, async (req, res) => {
@@ -195,6 +189,10 @@ hbs.registerHelper("formatDate", (value) => {
         timeZoneName: "longOffset",
     };
     return new Date(value).toLocaleString("en-GB", options);
+});
+
+hbs.registerHelper("formatDateShort", (value) => {
+    return new Date(value).toDateString();
 });
 
 app.listen(port, () => {
