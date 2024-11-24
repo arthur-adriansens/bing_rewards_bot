@@ -278,7 +278,7 @@
                                                 <tfoot class="border-t bg-muted/50 font-medium">
                                                     <tr class="border-b-0 transition-colors data-[state=selected]:bg-muted">
                                                         <td class="p-4 align-middle [&amp;:has([role=checkbox])]:pr-0">Total</td>
-                                                        <td class="p-4 align-middle [&amp;:has([role=checkbox])]:pr-0">10</td>
+                                                        <td class="p-4 align-middle [&amp;:has([role=checkbox])]:pr-0">{{users.length}}</td>
                                                         <td class="p-4 align-middle [&amp;:has([role=checkbox])]:pr-0" colspan="3">
                                                             <button
                                                                 tabindex="0"
@@ -500,8 +500,11 @@
                                                 <tfoot class="border-t bg-muted/50 font-medium">
                                                     <tr class="border-b-0 transition-colors data-[state=selected]:bg-muted">
                                                         <td class="p-4 align-middle [&amp;:has([role=checkbox])]:pr-0">Total</td>
-                                                        <td class="p-4 align-middle [&amp;:has([role=checkbox])]:pr-0" colspan="4">10</td>
-                                                        <td class="p-4 align-middle [&amp;:has([role=checkbox])]:pr-0">1000</td>
+                                                        <td
+                                                            class="p-4 align-middle [&amp;:has([role=checkbox])]:pr-0"
+                                                            colspan="4"
+                                                        >{{bots.length}}</td>
+                                                        <td class="p-4 align-middle [&amp;:has([role=checkbox])]:pr-0">{{pointsSum}}</td>
                                                         <td class="p-4 align-middle [&amp;:has([role=checkbox])]:pr-0" colspan="10">
                                                             <button
                                                                 tabindex="0"

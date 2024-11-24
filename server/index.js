@@ -63,9 +63,9 @@ app.get("/admin", async (req, res) => {
 
     const { rows: users } = await sql`SELECT * FROM users;`;
     const { rows: bots } = await sql`SELECT * FROM botaccounts;`;
-    console.log(bots);
 
-    return res.status(200).render("admin.hbs", { users, bots });
+    const pointsSum = bots.reduce((previous, current) => previous + current.points, 0);
+    return res.status(200).render("admin.hbs", { users, bots, pointsSum });
 });
 
 app.post("/admin/new_user", adminAuthMiddleware, async (req, res) => {
@@ -159,6 +159,7 @@ app.post("/logout", async (req, res) => {
     res.clearCookie("id");
     res.status(200).redirect("/");
 });
+
 app.get("/dashboard", authMiddleware, async (req, res) => {
     // CREATE TABLE botAccounts (id SERIAL PRIMARY KEY, email VARCHAR(100), password TEXT, username VARCHAR(50), personal BOOLEAN, last_collected TIMESTAMPTZ, points INTEGER, streak SMALLINT);
     const { rows: user } = await sql`UPDATE users SET last_login = NOW() WHERE id = ${req.cookies.id} RETURNING username;`;
