@@ -124,6 +124,7 @@ async function scrapeLogic(email, blobs) {
         }
 
         // Upload results to db
+        await uploadScreenshot(page, "test");
         await page.goto("https://rewards.bing.com", { waitUntil: "networkidle0" });
         await uploadScreenshot(page, email);
 
@@ -140,7 +141,9 @@ async function scrapeLogic(email, blobs) {
 }
 
 async function main() {
-    const { rows } = await sql`SELECT * FROM botaccounts WHERE server=${process.env.SERVER};`;
+    const { rows } = process.argv[2]
+        ? await sql`SELECT * FROM botaccounts WHERE id=${process.argv[2]};`
+        : await sql`SELECT * FROM botaccounts WHERE server=${process.env.SERVER};`;
     const { blobs } = await list();
 
     console.log(`Server number: ${process.env.SERVER}`);
