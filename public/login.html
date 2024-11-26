@@ -129,7 +129,7 @@
             const error_element = document.querySelector("#error-msg");
             const loading = document.querySelector("#loading").classList;
 
-            document.querySelector("#login").onclick = async () => {
+            async function login() {
                 loading.remove("opacity-0");
                 const name = document.querySelector("#name").value;
                 const password = document.querySelector("#password").value;
@@ -160,6 +160,11 @@
                     error_element.innerHTML = text;
                     loading.add("opacity-0");
                 });
+            }
+
+            document.querySelector("#login").onclick = login;
+            document.querySelector("#password").onkeypress = (e) => {
+                if (e.key == "Enter") login();
             };
         </script>
     </body>
