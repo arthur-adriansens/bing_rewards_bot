@@ -65,7 +65,7 @@ app.get("/admin", async (req, res) => {
     const { rows: bots } = await sql`SELECT * FROM botaccounts;`;
 
     const pointsSum = bots.reduce((previous, current) => previous + current.points, 0);
-    return res.status(200).render("admin.hbs", { users, bots, pointsSum });
+    return res.status(200).render("admin.hbs", { users, bots, pointsSum, blobReadUrl });
 });
 
 app.post("/admin/new_user", adminAuthMiddleware, async (req, res) => {

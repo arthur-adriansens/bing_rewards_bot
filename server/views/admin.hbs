@@ -525,6 +525,26 @@
                                         </div>
                                     </div>
                                 </fieldset>
+
+                                <fieldset
+                                    id="getImages"
+                                    class="svg-hover h-full w-full flex gap-6 rounded-lg grid-cols-2 border p-4 bg-background items-center justify-center cursor-pointer"
+                                >
+                                    <legend class="-ml-1 px-1 text-sm font-medium">Screenshots</legend>
+                                    <svg viewBox="0 0 24 24" class="opacity-50 my-5">
+                                        <path d="M10.3 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v10l-3.1-3.1a2 2 0 0 0-2.814.014L6 21" />
+                                        <path d="m14 19 3 3v-5.5" />
+                                        <path d="m17 22 3-3" />
+                                        <circle cx="9" cy="9" r="2" />
+                                    </svg>
+                                    <div class="flex flex-wrap w-full h-full hidden">
+                                        <img
+                                            id="imageTemplate"
+                                            class="w-2/6 rounded-md border px-3 py-2"
+                                            src="https://{{blobReadUrl}}.public.blob.vercel-storage.com/image-"
+                                        />
+                                    </div>
+                                </fieldset>
                             </main>
                         </div>
                     </div>
@@ -588,6 +608,22 @@
                     .then((response) => response.json())
                     .then((data) => console.log(data));
             };
+
+            document.querySelector("#getImages").addEventListener("click", () => {
+                const image = document.querySelector("#imageTemplate");
+                const emails = [...document.querySelectorAll("#bots tbody tr:not(#new_inputs) td:nth-child(2)")].map((element) => element.textContent);
+
+                for (let email of emails) {
+                    const new_element = image.cloneNode(true);
+                    new_element.id = "";
+                    new_element.src += `${email}.png`;
+                    image.parentElement.appendChild(new_element);
+                }
+
+                image.parentElement.parentElement.querySelector("svg").classList.add("hidden");
+                image.classList.add("hidden");
+                image.parentElement.classList.remove("hidden");
+            });
         </script>
     </body>
 </html>

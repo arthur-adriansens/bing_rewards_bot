@@ -124,10 +124,10 @@ async function scrapeLogic(email, blobs) {
         }
 
         // Upload results to db
-        await uploadScreenshot(page, "test");
-        await page.goto("https://rewards.bing.com", { waitUntil: "networkidle0" });
+        await page.goto("https://rewards.bing.com/pointsbreakdown", { waitUntil: "networkidle0" });
         await uploadScreenshot(page, email);
 
+        await page.goto("https://rewards.bing.com/", { waitUntil: "networkidle0" });
         const points = await page.$$eval("#rewardsBanner mee-rewards-counter-animation span", (points) =>
             points.map((x) => x.innerHTML.replace(",", ""))
         );
