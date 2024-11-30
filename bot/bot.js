@@ -57,6 +57,25 @@ async function uploadScreenshot(page, email) {
     }
 }
 
+async function getActivePage(browser, timeout) {
+    var start = new Date().getTime();
+    while (new Date().getTime() - start < timeout) {
+        var pages = await browser.pages();
+        var arr = [];
+        for (const p of pages) {
+            if (
+                await p.evaluate(() => {
+                    return document.visibilityState == "visible";
+                })
+            ) {
+                arr.push(p);
+            }
+        }
+        if (arr.length == 1) return arr[0];
+    }
+    throw "Unable to get active page";
+}
+
 // MAIN
 async function scrapeLogic(email, blobs) {
     const browser = await puppeteer.launch({
@@ -86,9 +105,11 @@ async function scrapeLogic(email, blobs) {
         const pointsbreakdown = await page.$eval("#meeGradientBanner > div > div > div > p", (x) => x.innerHTML).catch(() => undefined);
         const maxSearches = pointsbreakdown.includes("Level 2") ? 30 : 10;
 
-        const reward_blocks = await page.$$("#daily-sets mee-card-group:first-of-type .c-card-content, #more-activities .c-card-content");
+        const reward_blocks = await page.$$(
+            "#daily-sets mee-card-group:first-of-type .c-card-content:has(.mee-icon-AddMedium), #more-activities .c-card-content:has(.mee-icon-AddMedium)"
+        );
         const cards_hrefs = await page.$$eval(
-            "#daily-sets mee-card-group:first-of-type .c-card-content a, #more-activities .c-card-content a",
+            "#daily-sets mee-card-group:first-of-type .c-card-content a:has(.mee-icon-AddMedium), #more-activities .c-card-content a:has(.mee-icon-AddMedium)",
             (cards) => cards.map((x) => x.getAttribute("href"))
         );
 
@@ -96,9 +117,28 @@ async function scrapeLogic(email, blobs) {
         for (let card_index in reward_blocks) {
             if (!cards_hrefs[card_index] || cards_hrefs[card_index].includes("bing.com/search")) {
                 await reward_blocks[card_index].click();
-                await page.bringToFront();
-                counter++;
+            } else if (cards_hrefs[card_index].includes("bing.com/?form")) {
+                console.log("Filling in form...");
+
+                const newPage = await getActivePage(browser, 10000);
+                await newPage.waitForSelector("input.rqOption", { visible: true, timeout: 10000 });
+                console.log("Found first button.");
+
+                for (let i = 0; i < 9; i++) {
+                    try {
+                        await newPage.waitForSelector("input.rqOption", { visible: true, timeout: 10000 });
+                        await (await newPage.$("input.rqOption:not(.optionDisable)")).click();
+                        console.log("clicked option " + i);
+                    } catch (e) {
+                        break;
+                    }
+                }
+
+                console.log("done");
             }
+
+            await page.bringToFront();
+            counter++;
         }
         console.log(`Clicked ${counter} times.`);
 
