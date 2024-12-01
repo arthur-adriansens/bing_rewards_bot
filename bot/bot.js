@@ -118,23 +118,23 @@ async function scrapeLogic(email, blobs) {
             if (!cards_hrefs[card_index] || cards_hrefs[card_index].includes("bing.com/search")) {
                 await reward_blocks[card_index].click();
             } else if (cards_hrefs[card_index].includes("bing.com/?form")) {
-                console.log("Filling in form...");
+                // console.log("Filling in form...");
 
-                const newPage = await getActivePage(browser, 10000);
-                await newPage.waitForSelector("input.rqOption", { visible: true, timeout: 10000 });
-                console.log("Found first button.");
+                // const newPage = await getActivePage(browser, 10000);
+                // await newPage.waitForSelector("input.rqOption", { visible: true, timeout: 10000 });
+                // console.log("Found first button.");
 
-                for (let i = 0; i < 9; i++) {
-                    try {
-                        await newPage.waitForSelector("input.rqOption", { visible: true, timeout: 10000 });
-                        await (await newPage.$("input.rqOption:not(.optionDisable)")).click();
-                        console.log("clicked option " + i);
-                    } catch (e) {
-                        break;
-                    }
-                }
+                // for (let i = 0; i < 9; i++) {
+                //     try {
+                //         await newPage.waitForSelector("input.rqOption", { visible: true, timeout: 10000 });
+                //         await (await newPage.$("input.rqOption:not(.optionDisable)")).click();
+                //         console.log("clicked option " + i);
+                //     } catch (e) {
+                //         break;
+                //     }
+                // }
 
-                console.log("done");
+                // console.log("done");
             }
 
             await page.bringToFront();
