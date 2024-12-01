@@ -3,6 +3,7 @@
 name: Run Node.js script at 8 AM
 
 on:
+    push:
     schedule:
         - cron: "0 8 * * *" # Runs at 8 AM UTC
 
